@@ -1,2 +1,2 @@
 # MapleTools
-A fun project to entertain and help maplers
+A fun project to entertain and help Maplers
