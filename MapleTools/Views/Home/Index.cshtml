@@ -1,0 +1,23 @@
+﻿@using Microsoft.AspNetCore.Localization
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model IEnumerable<Article>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@Localizer["Welcome"]</h1>
+
+    <div class="row mt-5">
+        <div class="col-md-8">
+            <h2>@Localizer["Recent News"]</h2>
+            <partial name="_ArticleListPartialView" model="Model.Where(a => a.Type == ArticleType.News)" />
+        </div>
+
+        <div class="col-md-4">
+            <h2>@Localizer["Personal Articles"]</h2>
+            <partial name="_ArticleListPartialView" model="Model.Where(a => a.Type == ArticleType.Personal)" />
+        </div>
+    </div>
+</div>

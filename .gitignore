@@ -1,0 +1,81 @@
+# General .NET ignores
+**/[Bb]in/
+**/[Oo]bj/
+**/.vs/
+**/packages/
+*.user
+*.suo
+*.cache
+*.swp
+*.userprefs
+*.nupkg
+*.ncrunchsolution
+*.dotCover
+*.resharper
+*_ReSharper*
+*.sln.iml
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# IDE specific
+.vscode/
+.idea/
+*.sln.iml
+
+# Front-end dependencies (if any)
+**/wwwroot/lib/
+node_modules/
+
+# Local development files
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Secrets.json
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# Local database files
+*.mdf
+*.ldf
+
+# NuGet
+**/packages/
+*.nupkg
+
+# Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# User-specific files
+secrets.json
+.env
+*.private.*

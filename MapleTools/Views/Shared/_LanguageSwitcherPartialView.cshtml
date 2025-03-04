@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Localization
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultureItems = new[] { "en", "zh-CN" };
+}
+
+<form id="cultureForm" asp-controller="Localization" asp-action="SetLanguage"
+      asp-route-returnUrl="@Context.Request.Path" method="post">
+    <select class="form-control" name="culture" onchange="this.form.submit()"
+            asp-for="@requestCulture.RequestCulture.UICulture.Name"
+            asp-items="cultureItems.Select(c => new SelectListItem { Value = c, Text = c.ToUpper() })">
+    </select>
+</form>
