@@ -27,24 +27,13 @@ namespace MapleTools.Services.Aggregator
         {
             if (_aggregated.Count == 0)
             {
-                var cached = _cacheManager.GetCacheByName<List<Player>>(_name);
-                if (cached != null)
-                {
-                    _aggregated = cached as Dictionary<string, List<Player>> ?? new Dictionary<string, List<Player>>();
-                }
-                else
-                {
-                    var players = DummyData.Players;
-                    _aggregated = players
-                        .GroupBy(p => p.JobID)
-                        .ToDictionary(
-                            g => g.Key.ToString(),
-                            g => g.OrderBy(p => p.Level).ToList()
-                        );
-                    ICacheEntry result = new CacheEntry<List<Player>>(_aggregated);
-                    _cacheManager.SetCacheByName<List<Player>>(_name, result);
-                }
-
+                var players = DummyData.BannedPlayers;
+                _aggregated = players
+                    .GroupBy(p => p.JobID)
+                    .ToDictionary(
+                        g => g.Key.ToString(),
+                        g => g.OrderByDescending(p => p.Level).ToList()
+                    );
             }
         }
     }

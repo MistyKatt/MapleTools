@@ -34,16 +34,26 @@ namespace MapleTools.Simulation
 
         public static List<Player> Players = new List<Player>();
 
-        public static async void GeneratePlayers(string filePath)
+        public static List<Player> BannedPlayers = new List<Player>();
+
+        public static async void GeneratePlayers(string filePath1, string filePath2)
         {
             try
             {
-                if (File.Exists(filePath) && filePath.EndsWith("json"))
+                if (File.Exists(filePath1) && filePath1.EndsWith("json"))
                 {
-                    using (StreamReader rs = new StreamReader(filePath))
+                    using (StreamReader rs = new StreamReader(filePath1))
                     {
                         var result = await rs.ReadToEndAsync();
                         Players = JsonConvert.DeserializeObject<List<Player>>(result)??new List<Player>();
+                    }
+                }
+                if (File.Exists(filePath2) && filePath2.EndsWith("json"))
+                {
+                    using (StreamReader rs = new StreamReader(filePath2))
+                    {
+                        var result = await rs.ReadToEndAsync();
+                        BannedPlayers = JsonConvert.DeserializeObject<List<Player>>(result) ?? new List<Player>();
                     }
                 }
                 else

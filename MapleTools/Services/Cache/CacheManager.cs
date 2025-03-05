@@ -5,6 +5,7 @@ namespace MapleTools.Services.Cache
     public class CacheManager : ICacheManager
     {
         private Dictionary<string, ICacheEntry> _cache = new Dictionary<string, ICacheEntry>();
+
         public void ClearAllCache()
         {
             _cache.Clear();

@@ -1,3 +1,4 @@
+using MapleTools.Extensions;
 using MapleTools.Simulation;
 using Microsoft.AspNetCore.Mvc.Razor;
 
@@ -32,6 +33,10 @@ namespace MapleTools
                 options.ApplyCurrentCultureToResponseHeaders = true;
             });
 
+            builder.Services
+                .AddInitializationServices()
+                .AddAggregatorServices();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -41,11 +46,11 @@ namespace MapleTools
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            var path = app.Environment.ContentRootPath + @"\Simulation\fake_players.json";
-            DummyData.GeneratePlayers(path);
+            var path1 = app.Environment.ContentRootPath + @"\Simulation\fake_players.json";
+            var path2 = app.Environment.ContentRootPath + @"\Simulation\banned_players.json";
+            DummyData.GeneratePlayers(path1, path2);
 
             app.UseRequestLocalization();
-
             app.UseHttpsRedirection();
             app.UseRouting();
 

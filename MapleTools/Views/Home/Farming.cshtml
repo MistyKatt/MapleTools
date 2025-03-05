@@ -1,0 +1,22 @@
+﻿@model MapleTools.Models.Farming
+@{
+	var keys = Model.FarmingPlayers.Keys;
+}
+
+<p>Banlist placeholder</p>
+
+@foreach (var key in keys)
+{
+	<p>The job id @key </p>
+	if (Model.FarmingPlayers.TryGetValue(key, out var players))
+	{
+		foreach (var p in players)
+		{
+			<p>The farming player id @p.CharacterName @p.Level</p>
+		}
+	}
+	else
+	{
+		<p>No one is farming today</p>
+	}
+}
