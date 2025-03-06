@@ -1,23 +1,72 @@
 ﻿@model MapleTools.Models.BanList
 @{
-	var keys = Model.BannedPlayers.Keys;
+    var keys = Model.BannedPlayers.Keys;
 }
 
-<p>Banlist placeholder</p>
-
-@foreach(var key in keys)
-{
-	<p>The job id @key </p>
-	if(Model.BannedPlayers.TryGetValue(key, out var players))
-	{
-		foreach (var p in players)
-		{
-			<p>The banned player id @p.CharacterName @p.Level</p>
-		}
-	}
-	else
-	{
-		<p>No one is banned for the job</p>
-	}
+@section Styles {
+    <link rel="stylesheet" href="~/css/home/banlist/banlist.css" asp-append-version="true" />
 }
+
+@section Scripts {
+    <script src="~/js/home/banlist/banlist.js" asp-append-version="true"></script>
+}
+
+
+    
+
+
+
+<div class="container mt-4">
+        <div class="btn-group">
+            <button type="button" class="btn border-1 expanded" id="toggleCollapse">
+                Expand All
+            </button>
+        </div>
+    <div id="banlistAccordion">
+        @foreach (var jobGroup in keys)
+        {
+            var players = Model.BannedPlayers.GetValueOrDefault(jobGroup) ?? new List<Player>();
+            <div class="card mb-2 border-0">
+                <div class="card-header" id="heading-@jobGroup">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link"
+                                data-toggle="collapse"
+                                data-target="#collapse-@jobGroup"
+                                aria-expanded="true"
+                                aria-controls="collapse-@jobGroup">
+                            Job ID: @jobGroup
+                            <span class="accordion-toggle"></span>
+                            <span class="badge badge-secondary ml-2">There are @players.Count banned/name changed</span>
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapse-@jobGroup"
+                     class="collapse show"
+                     aria-labelledby="heading-@jobGroup">
+                    <div class="card-body p-2">
+                        <div class="list-group list-group-flush">
+                            @foreach (var player in Model.BannedPlayers.GetValueOrDefault(jobGroup)??new List<Player>())
+                            {
+                                <div class="list-group-item list-group-item-action p-2 border-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small class="text-muted">Player ID:</small>
+                                            <span class="font-weight-bold">@player.CharacterName</span>
+                                        </div>
+                                        <div>
+                                            <small class="text-muted">Level:</small>
+                                            <span class="badge badge-info">@player.Level</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
 

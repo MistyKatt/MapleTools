@@ -1,0 +1,63 @@
+﻿.card-header {
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+}
+
+.list-group-item {
+    padding: 0.25rem 1rem;
+    border-left: 0;
+    border-right: 0;
+    transition: background-color 0.2s ease;
+}
+
+
+
+.btn-link {
+    text-decoration: none;
+    color: #495057;
+}
+
+    .btn-link:hover {
+        text-decoration: none;
+        color: #0056b3;
+    }
+
+.badge {
+    color:black;
+}
+
+.control-buttons {
+    transition: all 0.2s ease;
+}
+
+    .control-buttons:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+.btn-outline-primary {
+    border-color: #4a90e2;
+    color: #4a90e2;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #4a90e2;
+        color: white;
+    }
+
+
+.accordion-toggle {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-right: 12px;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid #666;
+    transition: transform 0.2s ease;
+}
+
+/* Rotated state when collapsed */
+.collapsed .accordion-toggle {
+    transform: rotate(90deg);
+}
