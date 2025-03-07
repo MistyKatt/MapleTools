@@ -1,24 +1,138 @@
 ﻿@model MapleTools.Models.Trending
 @{
-	var keys = Model.JobTrending.Keys;
+    var keys = Model.JobTrending.Keys;
+}
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const charts = {};
+
+        @foreach (var level in keys)
+        {
+            Model.JobTrending.TryGetValue(level, out var jobData);
+            var total = jobData.Sum(j => j.Item2);
+            <text>
+                    const canvas@(level) = document.getElementById('chart-@level');
+                    const ctx@(level) = canvas@(level).getContext('2d'); <!--Need to set up gradiant from canvas api so 2d context is called -->
+                    charts[@level] = new Chart(ctx@(level), {
+                        type: 'bar',
+                        data: {
+                            labels: @Json.Serialize(jobData.Select(j => j.Item1)), //job type as label, a serialized list
+                            datasets: [{
+                                label: 'Player Count',
+                                data: @Json.Serialize(jobData.Select(j => j.Item2)), //player count of each job as data
+                                    backgroundColor: '#94ebe5',
+                                borderWidth: 0,
+                                borderRadius: 8,
+                                hoverBackgroundColor: '#1a4a8d'
+                            }]
+                        },
+                        options: getChartOptions(@total)
+                    });
+            </text>
+        }
+
+
+            function getChartOptions(total) {
+                return {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Player Count'
+                            }
+                        },
+                        x: {
+                            position: 'top',
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value;
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Player Count '
+                            }
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1a233b',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.x;
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${value} players (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 800,
+                        easing: 'easeOutQuart'
+                    }
+                };
+            }
+        });
+    </script>
+}
+
+@section Styles{
+    <link href="~/css/Home/Trending/trending.css" rel="stylesheet" asp-append-version="true"/>
 }
 
 <p>Trending Placeholder</p>
 
-@foreach (var key in keys)
-{
-	<p>The job id @key </p>
-	if (Model.JobTrending.TryGetValue(key, out var players))
-	{
-		foreach (var p in players)
-		{
-			<p>The job and the amount is @p.Item1 @p.Item2</p>
-		}
-	}
-	else
-	{
-		<p>No one is farming today</p>
-	}
-}
+
+<div class="container mt-4">
+    <!-- Level Tabs -->
+    <ul class="nav nav-tabs mb-4" id="levelTabs" role="tablist">
+        @foreach (var level in keys)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(level == "280" ? "active" : "")"
+                   id="level-@level-tab"
+                   data-toggle="tab"
+                   href="#level-@level"
+                   role="tab"
+                   data-level="@level">
+                    Lv. @level
+                </a>
+            </li>
+        }
+    </ul>
+
+    <!-- Chart Container -->
+    <div class="tab-content" id="levelTabsContent">
+        @foreach (var level in keys)
+        {
+            <div class="tab-pane fade @(level == "280" ? "show active" : "")"
+                 id="level-@level"
+                 role="tabpanel">
+                <div class="chart-container" style="height: 1600px; position: relative;">
+                    <canvas id="chart-@level"></canvas>
+                </div>
+            </div>
+        }
+    </div>
+</div>
 
 
