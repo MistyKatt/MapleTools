@@ -26,13 +26,8 @@ namespace MapleTools.Services.Aggregator
         {
             if (_aggregated.Count == 0)
             {
-                var players = DummyData.Players;
-                _aggregated = players
-                    .GroupBy(p => p.JobID)
-                    .ToDictionary(
-                        g => g.Key.ToString(),
-                        g => g.OrderBy(p => p.Gap).Take(10).ToList()
-                    );
+                var players = DummyData.FarmingPlayers;
+                _aggregated.Add("Kronos", players.OrderByDescending(p=>p.Gap).ToList());                  
             }
         }
 

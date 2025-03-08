@@ -1,0 +1,107 @@
+[
+  {
+    "boss name": "zakum",
+    "boss img": "/dummy.jpg",
+    "boss details": "/my/path",
+    "boss difficulty": {
+      "easy": {
+        "boss money": "300M",
+        "boss arc": "200",
+        "boss sac": "100",
+        "boss HP": {
+          "phase1": "10T",
+          "phase2": "10T",
+          "phase3": "10T"
+        },
+        "blue light HP": "15T",
+        "level": "200",
+        "defense": "300%",
+        "loot": [ "item1", "item2" ]
+      },
+      "hard": {
+        "boss money": "300M",
+        "boss arc": "200",
+        "boss sac": "100",
+        "boss HP": {
+          "phase1": "10T",
+          "phase2": "10T",
+          "phase3": "10T"
+        },
+        "blue light HP": "15T",
+        "level": "200",
+        "defense": "300%",
+        "loot": [ "item1", "item2", "item3" ]
+      }
+    }
+  },
+  {
+    "boss name": "vonbon",
+    "boss img": "/dummy.jpg",
+    "boss details": "/my/path",
+    "boss difficulty": {
+      "easy": {
+        "boss money": "300M",
+        "boss arc": "200",
+        "boss sac": "100",
+        "boss HP": {
+          "phase1": "10T",
+          "phase2": "10T",
+          "phase3": "10T"
+        },
+        "blue light HP": "15T",
+        "level": "200",
+        "defense": "300%",
+        "loot": [ "item1", "item2" ]
+      },
+      "hard": {
+        "boss money": "300M",
+        "boss arc": "200",
+        "boss sac": "100",
+        "boss HP": {
+          "phase1": "10T",
+          "phase2": "10T",
+          "phase3": "10T"
+        },
+        "blue light HP": "15T",
+        "level": "200",
+        "defense": "300%",
+        "loot": [ "item1", "item2", "item3" ]
+      }
+    }
+  },
+  {
+    "boss name": "kalos",
+    "boss img": "/dummy.jpg",
+    "boss details": "/my/path",
+    "boss difficulty": {
+      "easy": {
+        "boss money": "300M",
+        "boss arc": "200",
+        "boss sac": "100",
+        "boss HP": {
+          "phase1": "10T",
+          "phase2": "10T",
+          "phase3": "10T"
+        },
+        "blue light HP": "15T",
+        "level": "200",
+        "defense": "300%",
+        "loot": [ "item1", "item2" ]
+      },
+      "hard": {
+        "boss money": "300M",
+        "boss arc": "200",
+        "boss sac": "100",
+        "boss HP": {
+          "phase1": "10T",
+          "phase2": "10T",
+          "phase3": "10T"
+        },
+        "blue light HP": "15T",
+        "level": "200",
+        "defense": "300%",
+        "loot": [ "item1", "item2", "item3" ]
+      }
+    }
+  }
+]

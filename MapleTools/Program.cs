@@ -48,7 +48,8 @@ namespace MapleTools
             }
             var path1 = app.Environment.ContentRootPath + @"\Simulation\fake_players.json";
             var path2 = app.Environment.ContentRootPath + @"\Simulation\banned_players.json";
-            DummyData.GeneratePlayers(path1, path2);
+            var path3 = app.Environment.ContentRootPath + @"\Simulation\farming_players.json";
+            DummyData.GeneratePlayers(path1, path2, path3);
 
             app.UseRequestLocalization();
             app.UseHttpsRedirection();

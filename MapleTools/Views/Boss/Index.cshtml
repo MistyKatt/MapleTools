@@ -1,0 +1,71 @@
+﻿@model List<MapleTools.Models.Boss.Boss>
+@{
+
+}
+
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Boss</th>
+                <th>Difficulty</th>
+                <th>HP</th>
+                <th>Level</th>
+                <th>Arc Level</th>
+                <th>Sac Level</th>
+                <th>Defense</th>
+                <th>Loot</th>
+                <th>Rewards</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var boss in Model)
+            {
+                <tr class="bg-light">
+                    <!-- Merged Boss Info -->
+                    <td rowspan="@(boss.Difficulties.Count + 1)" class="text-center">
+                        <img src="@boss.ImageUrl" class="img-thumbnail mb-2" style="max-width: 120px">
+                        <h5>@boss.Name</h5>
+                        <a href="@boss.DetailsUrl" class="btn btn-sm btn-outline-primary mt-2">
+                            Details <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                @foreach (var difficulty in boss.Difficulties)
+                {
+                    <tr>
+                        <td class="text-uppercase fw-bold">@difficulty.Key</td>
+                        <td>
+                            <div class="d-flex justify-content-between">
+                                <span>Total HP: @string.Join(" + ", difficulty.Value.Hp.Phase1, difficulty.Value.Hp.Phase2, difficulty.Value.Hp.Phase3)</span>
+                            </div>
+                            <hr class="my-1">
+                            <small class="text-muted">Blue Light: @difficulty.Value.BlueLightHp</small>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-between">
+                                <span>Mesos: @difficulty.Value.Money</span>
+                            </div>
+                        </td>
+                        <td>@difficulty.Value.ArcaneSymbol</td>
+                        <td>@difficulty.Value.SacredSymbol</td>
+                        <td>@difficulty.Value.Defense</td>
+                        <td>@difficulty.Value.Level</td>
+                        <td>
+                            <ul class="list-unstyled mb-0">
+                                @foreach (var item in difficulty.Value.Loot)
+                                {
+                                    <li class="text-truncate" title="@item">
+                                        <i class="fas fa-cube me-2 text-primary"></i>@item
+                                    </li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

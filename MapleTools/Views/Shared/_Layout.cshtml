@@ -24,16 +24,22 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-action="BanList">@Localizer["Banlist"]</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="BanList">@Localizer["Banlist"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-action="Trending">@Localizer["Trending"]</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Trending">@Localizer["Trending"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-action="Tools">@Localizer["Tools"]</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Farming">@Localizer["Farming"]</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-action="Blogs">@Localizer["Blogs"]</a>
+                            <a class="nav-link text-dark" asp-controller="Boss" asp-action="Index">@Localizer["Bosses"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Tools">@Localizer["Tools"]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Blogs">@Localizer["Blogs"]</a>
                         </li>
                     </ul>
                     <partial name="_LanguageSwitcherPartialView" />

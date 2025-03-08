@@ -1,22 +1,133 @@
 ﻿@model MapleTools.Models.Farming
 @{
-	var keys = Model.FarmingPlayers.Keys;
+    var keys = Model.FarmingPlayers.Keys;
 }
 
-<p>Banlist placeholder</p>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const charts = {};
 
-@foreach (var key in keys)
-{
-	<p>The job id @key </p>
-	if (Model.FarmingPlayers.TryGetValue(key, out var players))
-	{
-		foreach (var p in players)
-		{
-			<p>The farming player id @p.CharacterName @p.Level</p>
-		}
-	}
-	else
-	{
-		<p>No one is farming today</p>
-	}
+        @foreach (var server in keys)
+        {
+            Model.FarmingPlayers.TryGetValue(server, out var farmingData);
+            <text>
+                        const canvas@(server) = document.getElementById('chart-@server');
+                        const ctx@(server) = canvas@(server).getContext('2d'); <!--Need to set up gradiant from canvas api so 2d context is called -->
+                        charts['kronos'] = new Chart(ctx@(server), {
+                            type: 'bar',
+                            data: {
+                                labels: @Json.Serialize(farmingData?.Select(p => p.CharacterName)), //job type as label, a serialized list
+                                datasets: [{
+                                    label: 'Player EXP',
+                                    data: @Json.Serialize(farmingData?.Select(p => p.Gap)), //player count of each job as data
+                                        backgroundColor: '#94ebe5',
+                                    borderWidth: 0,
+                                    borderRadius: 8,
+                                    hoverBackgroundColor: '#1a4a8d'
+                                }]
+                            },
+                            options: getChartOptions()
+                        });
+            </text>
+        }
+
+
+            function getChartOptions(total) {
+                return {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Players'
+                            }
+                        },
+                        x: {
+                            position: 'top',
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value/1000000000+'B';
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Weekly Exp '
+                            }
+                        },
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1a233b',
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 14 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.x/1000000000;
+                                    return `${value} B`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 800,
+                        easing: 'easeOutQuart'
+                    }
+                };
+            }
+        });
+    </script>
 }
+
+@section Styles {
+    <link href="~/css/Home/Farming/farming.css" rel="stylesheet" asp-append-version="true" />
+}
+
+
+<div class="container mt-4">
+    <!-- Level Tabs -->
+    <ul class="nav nav-tabs mb-4" id="serverTabs" role="tablist">
+        @foreach (var server in keys)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(server == "Kronos" ? "active" : "")"
+                   id="server-@server-tab"
+                   data-toggle="tab"
+                   href="#server-@server"
+                   role="tab"
+                   data-level="@server">
+                    server. @server
+                </a>
+            </li>
+        }
+    </ul>
+
+    <!-- Chart Container -->
+    <div class="tab-content" id="serverTabsContent">
+        @foreach (var server in keys)
+        {
+            <div class="tab-pane fade @(server == "Kronos" ? "show active" : "")"
+                 id="server-@server"
+                 role="tabpanel">
+                <div class="chart-container" style="height: 1600px; position: relative;">
+                    <canvas id="chart-@server"></canvas>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

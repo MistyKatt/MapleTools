@@ -1,5 +1,6 @@
 ﻿using MapleTools.Abstraction;
 using MapleTools.Services.Aggregator;
+using MapleTools.Services.BossDataService;
 using MapleTools.Services.Cache;
 using MapleTools.Services.Initialization;
 using MapleTools.Services.Localization;
@@ -21,6 +22,7 @@ namespace MapleTools.Extensions
             services.AddSingleton<FakeDataService>();
             services.AddSingleton<ICacheManager, CacheManager>();
             services.AddSingleton<ILocalizationManager, LocalizationManager>();
+            services.AddSingleton<BossDataService>();
             return services;
         }
 

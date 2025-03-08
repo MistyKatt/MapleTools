@@ -1,0 +1,18 @@
+﻿.nav-tabs .nav-link {
+    transition: all 0.3s ease;
+    border-radius: 8px 8px 0 0;
+    margin-right: 5px;
+}
+
+    .nav-tabs .nav-link.active {
+        background: linear-gradient(145deg, #ffffff, #f0f2f5);
+        border-color: #dee2e6 #dee2e6 #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+.chart-container {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}

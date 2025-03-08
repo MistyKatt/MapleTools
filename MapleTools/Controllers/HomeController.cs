@@ -51,6 +51,20 @@ namespace MapleTools.Controllers
             };
             return View(trending);
         }
+
+        [Route("Farming")]
+        public IActionResult Farming()
+        {
+            if (_farmingAggregator.Aggregated.Count == 0)
+            {
+                _farmingAggregator.Aggregate();
+            }
+            var farming = new Farming()
+            {
+                FarmingPlayers = _farmingAggregator.Aggregated
+            };
+            return View(farming);
+        }
         [Route("Tools")]
         public IActionResult Tools()
         {

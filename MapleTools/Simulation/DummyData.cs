@@ -36,7 +36,9 @@ namespace MapleTools.Simulation
 
         public static List<Player> BannedPlayers = new List<Player>();
 
-        public static async void GeneratePlayers(string filePath1, string filePath2)
+        public static List<Player> FarmingPlayers = new List<Player>();
+
+        public static async void GeneratePlayers(string filePath1, string filePath2, string filePath3)
         {
             try
             {
@@ -54,6 +56,14 @@ namespace MapleTools.Simulation
                     {
                         var result = await rs.ReadToEndAsync();
                         BannedPlayers = JsonConvert.DeserializeObject<List<Player>>(result) ?? new List<Player>();
+                    }
+                }
+                if (File.Exists(filePath3) && filePath3.EndsWith("json"))
+                {
+                    using (StreamReader rs = new StreamReader(filePath3))
+                    {
+                        var result = await rs.ReadToEndAsync();
+                        FarmingPlayers = JsonConvert.DeserializeObject<List<Player>>(result) ?? new List<Player>();
                     }
                 }
                 else
