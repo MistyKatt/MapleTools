@@ -1,0 +1,61 @@
+[
+  {
+    "blog title": "Starting Strong: Early Game Progression Guide",
+    "blog content": "<p>Essential tips for new players covering level 1-200 progression, best starter classes, and early gear optimization strategies.</p>",
+    "external link": null,
+    "internal link": "/blogs/early-game-guide",
+    "is external": false,
+    "game stage": 0
+  },
+  {
+    "blog title": "Mid Game Gear Optimization Roadmap",
+    "blog content": "<h2>From Chaos Root Abyss to Lomien</h2><p>Complete equipment upgrade path guide for players transitioning to mid-game content.</p>",
+    "external link": "https://external-bloghub.com/mid-gear",
+    "internal link": null,
+    "is external": true,
+    "game stage": 1
+  },
+  {
+    "blog title": "Late Game Boss Mechanics: Black Mage",
+    "blog content": "<div class='advanced'><p>In-depth analysis of Black Mage phase mechanics, party composition strategies, and survival tips.</p></div>",
+    "external link": null,
+    "internal link": "/blogs/black-mage-guide",
+    "is external": false,
+    "game stage": 2
+  },
+  {
+    "blog title": "Early Game Fast Leveling Routes (1-200)",
+    "blog content": "<ul><li>Best maps per level range</li><li>EXP buff stacking guide</li><li>MVP utilization tips</li></ul>",
+    "external link": null,
+    "internal link": "/blogs/leveling-guide",
+    "is external": false,
+    "game stage": 0
+  },
+  {
+    "blog title": "Mid Game Meso Farming Guide",
+    "blog content": "<p>Updated methods for efficient meso farming including WAPO farming, boss crystal rotations, and market flipping strategies.</p>",
+    "external link": "https://mesoguide.pro/mid-game",
+    "internal link": null,
+    "is external": true,
+    "game stage": 1
+  },
+  {
+    "blog title": "Early Game Fast Leveling Routes (1-200)",
+    "blog content": "<ul><li>Best maps per level range</li><li>EXP buff stacking guide</li><li>MVP utilization tips</li></ul>",
+    "external link": null,
+    "internal link": "/blogs/leveling-guide",
+    "is external": false,
+    "game stage": 2
+  },
+  {
+    "blog title": "Mid Game Meso Farming Guide",
+    "blog content": "<p>Updated methods for efficient meso farming including WAPO farming, boss crystal rotations, and market flipping strategies.</p>",
+    "external link": "https://mesoguide.pro/mid-game",
+    "internal link": null,
+    "is external": true,
+    "game stage": 0
+  }
+]
+
+
+

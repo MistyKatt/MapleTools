@@ -1,7 +1,42 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model List<MapleTools.Models.Content.Tool>
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/home/tools/Tools.css" asp-append-version="true" />
 }
 
-<p>Tools page placeholder</p>
+<div class="container py-5">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var tool in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 hover-effect">
+                    <div class="card-body">
+                        <h3 class="card-title mb-3">
+                            @if (!string.IsNullOrEmpty(tool.InternalLink) || !string.IsNullOrEmpty(tool.ExternalLink))
+                            {
+                                <a href="@(tool.IsExternal ? tool.ExternalLink : tool.InternalLink)"
+                                   class="text-decoration-none tool-link"
+                                   target="@(tool.IsExternal ? "_blank" : null)"
+                                   rel="@(tool.IsExternal ? "noopener noreferrer" : null)">
+                                    @tool.Name
+                                    @if (tool.IsExternal)
+                                    {
+                                        <i class="fas fa-external-link-alt ms-2 fs-6"></i>
+                                    }
+                                </a>
+                            }
+                            else
+                            {
+                                @tool.Name
+                            }
+                        </h3>
+                        <div class="card-text text-muted line-clamp-3">
+                            @tool.Description
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

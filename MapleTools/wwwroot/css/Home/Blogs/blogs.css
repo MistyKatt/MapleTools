@@ -1,0 +1,36 @@
+﻿.card {
+    border-radius: 0.5rem !important;
+    transition: transform 0.2s ease;
+}
+
+    .card:hover {
+        transform: translateY(-2px);
+    }
+
+.blog-title {
+    flex: 1;
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+    .blog-title::before {
+        content: "📝";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+.list-group-item {
+    border-color: rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+        padding-left: 1.25rem;
+    }
+
+        .list-group-item:hover .blog-title::before {
+            content: "🔥";
+        }

@@ -23,6 +23,8 @@ namespace MapleTools.Extensions
             services.AddSingleton<ICacheManager, CacheManager>();
             services.AddSingleton<ILocalizationManager, LocalizationManager>();
             services.AddSingleton<BossDataService>();
+            services.AddSingleton<ToolDataService>();
+            services.AddSingleton<BlogDataService>();
             return services;
         }
 

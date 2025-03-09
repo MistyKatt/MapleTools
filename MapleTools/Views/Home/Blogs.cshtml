@@ -1,7 +1,40 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model Dictionary<int, List<MapleTools.Models.Content.Blog>>
 
-<p>Blogs Placeholder</p>
+@section Styles{
+    <link rel="stylesheet" href="~/css/home/blogs/blogs.css" asp-append-version="true" />
+}
+<div class="container py-5">
+    <div class="row g-4">
+        @foreach (var category in Model)
+        {
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white rounded-top">
+                        <h2 class="h5 mb-0 text-uppercase">@category.Key</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            @foreach (var blog in category.Value)
+                            {
+                                <a href="@(blog.IsExternal ? blog.ExternalLink : blog.InternalLink)"
+                                   class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3"
+                                   target="@(blog.IsExternal ? "_blank" : null)"
+                                   rel="@(blog.IsExternal ? "noopener noreferrer" : null)">
+                                    <span class="blog-title">@blog.Title</span>
+                                    @if (blog.IsExternal)
+                                    {
+                                        <i class="fas fa-external-link-alt ms-2 text-muted"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-arrow-right ms-2 text-muted"></i>
+                                    }
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
