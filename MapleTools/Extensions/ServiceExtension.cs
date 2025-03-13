@@ -1,9 +1,9 @@
 ﻿using MapleTools.Abstraction;
-using MapleTools.Services.Aggregator;
-using MapleTools.Services.BossDataService;
+using MapleTools.Localization;
+using MapleTools.Services.FileDataServices;
+using MapleTools.Services.ApiDataServices;
 using MapleTools.Services.Cache;
 using MapleTools.Services.Initialization;
-using MapleTools.Services.Localization;
 using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 
@@ -21,7 +21,7 @@ namespace MapleTools.Extensions
         {
             services.AddSingleton<FakeDataService>();
             services.AddSingleton<ICacheManager, CacheManager>();
-            services.AddSingleton<ILocalizationManager, LocalizationManager>();
+            services.AddSingleton<LocalizationService>();
             services.AddSingleton<BossDataService>();
             services.AddSingleton<ToolDataService>();
             services.AddSingleton<BlogDataService>();
@@ -30,17 +30,17 @@ namespace MapleTools.Extensions
 
         public static IServiceCollection AddAggregatorServices(this IServiceCollection services)
         {
-            services.AddSingleton<BanListAggregator>();
-            services.AddSingleton<FarmingAggregator>();
-            services.AddSingleton<TrendingAggregator>();
+            services.AddSingleton<BanListService>();
+            services.AddSingleton<FarmingService>();
+            services.AddSingleton<TrendingService>();
 
-            services.AddSingleton<Func<AggregatorType, IDataAggregator>>(serviceProvider => type =>
+            services.AddSingleton<Func<AggregatorType, IDataService>>(serviceProvider => type =>
             {
                 return type switch
                 {
-                    AggregatorType.BanList => serviceProvider.GetService<BanListAggregator>(),
-                    AggregatorType.Farming => serviceProvider.GetService<FarmingAggregator>(),
-                    AggregatorType.Trending => serviceProvider.GetService<TrendingAggregator>(),
+                    AggregatorType.BanList => serviceProvider.GetService<BanListService>(),
+                    AggregatorType.Farming => serviceProvider.GetService<FarmingService>(),
+                    AggregatorType.Trending => serviceProvider.GetService<TrendingService>(),
                     _ => throw new KeyNotFoundException()
                 };
             });

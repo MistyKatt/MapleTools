@@ -1,4 +1,6 @@
 using MapleTools.Extensions;
+using MapleTools.Localization;
+using MapleTools.Services;
 using MapleTools.Simulation;
 using Microsoft.AspNetCore.Mvc.Razor;
 
@@ -13,15 +15,8 @@ namespace MapleTools
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             //Add localization support
-            builder.Services.AddLocalization(options =>
-            {
-                options.ResourcesPath = "Resources"; // Path to resource files
-            });
-
-            // 2. Configure MVC with View Localization
-            builder.Services.AddControllersWithViews()
-                .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix) // Views can have .en.cshtml, .zh-CN.cshtml
-                .AddDataAnnotationsLocalization(); // For validation attribute localization
+            
+            
 
             // 3. Configure Request Localization Options
             var supportedCultures = new[] { "en", "zh-CN" };
@@ -32,7 +27,8 @@ namespace MapleTools
                 options.AddSupportedUICultures(supportedCultures);
                 options.ApplyCurrentCultureToResponseHeaders = true;
             });
-
+            builder.Services.Configure<LocalizationOptions>(builder.Configuration.GetSection(LocalizationOptions.Name));
+            builder.Services.Configure<ServiceOptions>(builder.Configuration.GetSection(ServiceOptions.Name));
             builder.Services
                 .AddInitializationServices()
                 .AddAggregatorServices();

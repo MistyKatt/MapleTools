@@ -2,28 +2,29 @@
 using MapleTools.Models;
 using MapleTools.Services.Cache;
 using MapleTools.Simulation;
+using Microsoft.Extensions.Options;
 
-namespace MapleTools.Services.Aggregator
+namespace MapleTools.Services.ApiDataServices
 {
     /// <summary>
     /// Take List<player> as input and generate job:List<player> dictionary as result
     /// </summary>
-    public class BanListAggregator : IDataAggregator
+    public class BanListService : ApiDataService
     {
         private Dictionary<string, List<Player>> _aggregated;
 
-        private ICacheManager _cacheManager;
-
         private readonly string _name = "BanList";
 
-        public BanListAggregator(ICacheManager cacheManager)
+        private string _endpoint;
+
+        public BanListService(IOptions<ServiceOptions> serviceOptions):base()
         {
             _aggregated = new Dictionary<string, List<Player>>();
-            _cacheManager = cacheManager;
+            _endpoint = serviceOptions.Value?.BanListService??"dummy";
         }
 
         public Dictionary<string, List<Player>> Aggregated { get { return _aggregated; } }
-        public void Aggregate()
+        public async override Task Aggregate()
         {
             if (_aggregated.Count == 0)
             {

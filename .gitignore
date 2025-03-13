@@ -79,3 +79,6 @@ Thumbs.db
 secrets.json
 .env
 *.private.*
+
+#Data files
+**/Data/

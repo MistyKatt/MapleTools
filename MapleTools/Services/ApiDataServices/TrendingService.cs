@@ -1,27 +1,28 @@
 ﻿using MapleTools.Abstraction;
 using MapleTools.Simulation;
+using Microsoft.Extensions.Options;
 
-namespace MapleTools.Services.Aggregator
+namespace MapleTools.Services.ApiDataServices
 {
     /// <summary>
     /// Take List<player> as input and generate level: (job, count) as output 
     /// </summary>
-    public class TrendingAggregator : IDataAggregator
+    public class TrendingService : ApiDataService
     {
         private Dictionary<string, List<(string, int)>> _aggregated;
 
-        private ICacheManager _cacheManager;
-
         private readonly string _name = "Trending";
 
-        public TrendingAggregator(ICacheManager cacheManager)
+        private string _endpoint;
+
+        public TrendingService(IOptions<ServiceOptions> serviceOptions)
         {
             _aggregated = new Dictionary<string, List<(string, int)>>();
-            _cacheManager = cacheManager;
+            _endpoint = serviceOptions.Value?.TrendingService??"dummy";
         }
 
         public Dictionary<string, List<(string, int)>> Aggregated { get { return _aggregated; } }
-        public void Aggregate()
+        public async override Task Aggregate()
         {
             if (_aggregated.Count == 0)
             {

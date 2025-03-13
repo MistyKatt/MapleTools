@@ -1,4 +1,4 @@
-﻿using MapleTools.Services.BossDataService;
+﻿using MapleTools.Services.FileDataServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MapleTools.Controllers
@@ -22,7 +22,7 @@ namespace MapleTools.Controllers
         {
             if(_bossDataService.Bosses.Count == 0)
             {
-                await _bossDataService.GetBossData(_filePath);
+                await _bossDataService.Aggregate();
             }
             return View(_bossDataService.Bosses);
         }

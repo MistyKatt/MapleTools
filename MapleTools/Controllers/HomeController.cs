@@ -1,33 +1,32 @@
 ﻿using MapleTools.Models;
-using MapleTools.Services.Aggregator;
-using MapleTools.Services.BossDataService;
+using MapleTools.Services.ApiDataServices;
+using MapleTools.Services.FileDataServices;
 using MapleTools.Simulation;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace MapleTools.Controllers
 {
     [Route("")]
     public class HomeController : Controller
     {
-        private BanListAggregator _banListAggregator;
-        private TrendingAggregator _trendingAggregator;
-        private FarmingAggregator _farmingAggregator;
+        private BanListService _banListService;
+        private TrendingService _trendingService;
+        private FarmingService _farmingService;
         private ToolDataService _toolDataService;
         private BlogDataService _blogDataService;
-        private string _filePathTool, _filePathBlog;
         private IWebHostEnvironment _webHostEnvironment;
 
-        public HomeController(BanListAggregator banListAggregator, TrendingAggregator trendingAggregator, FarmingAggregator farmingAggregator, ToolDataService toolDataService, BlogDataService blogDataService, IWebHostEnvironment webHostEnvironment)
+        public HomeController(BanListService banListService, TrendingService trendingService, FarmingService farmingService, ToolDataService toolDataService, BlogDataService blogDataService, IWebHostEnvironment webHostEnvironment)
         {
-            _banListAggregator = banListAggregator;
-            _trendingAggregator = trendingAggregator;
-            _farmingAggregator = farmingAggregator;
+            _banListService = banListService;
+            _trendingService = trendingService;
+            _farmingService = farmingService;
             _webHostEnvironment = webHostEnvironment;
             _toolDataService = toolDataService;
             _blogDataService = blogDataService;
-            _filePathTool = _webHostEnvironment.ContentRootPath + @"\Simulation\tools.json";
-            _filePathBlog = _webHostEnvironment.ContentRootPath + @"\Simulation\blogs.json";
         }
 
         [Route("")]
@@ -37,42 +36,42 @@ namespace MapleTools.Controllers
         }
 
         [Route("BanList")]
-        public IActionResult BanList()
+        public async Task<IActionResult> BanList()
         {
-            if(_banListAggregator.Aggregated.Count == 0)
+            if(_banListService.Aggregated.Count == 0)
             {
-                _banListAggregator.Aggregate();
+                await _banListService.Aggregate();
             }
             var banlist = new BanList()
             {
-                BannedPlayers = _banListAggregator.Aggregated
+                BannedPlayers = _banListService.Aggregated
             };
             return View(banlist);
         }
         [Route("Trending")]
-        public IActionResult Trending()
+        public async Task<IActionResult> Trending()
         {
-            if (_trendingAggregator.Aggregated.Count == 0)
+            if (_trendingService.Aggregated.Count == 0)
             {
-                _trendingAggregator.Aggregate();
+                await _trendingService.Aggregate();
             }
             var trending = new Trending()
             {
-                JobTrending = _trendingAggregator.Aggregated
+                JobTrending = _trendingService.Aggregated
             };
             return View(trending);
         }
 
         [Route("Farming")]
-        public IActionResult Farming()
+        public async Task<IActionResult> Farming()
         {
-            if (_farmingAggregator.Aggregated.Count == 0)
+            if (_farmingService.Aggregated.Count == 0)
             {
-                _farmingAggregator.Aggregate();
+                await _farmingService.Aggregate();
             }
             var farming = new Farming()
             {
-                FarmingPlayers = _farmingAggregator.Aggregated
+                FarmingPlayers = _farmingService.Aggregated
             };
             return View(farming);
         }
@@ -81,16 +80,18 @@ namespace MapleTools.Controllers
         {
             if (_toolDataService.Tools.Count == 0)
             {
-                await _toolDataService.GetToolData(_filePathTool);
+                await _toolDataService.Aggregate();
             }
-            return View(_toolDataService.Tools);
+            var language = CultureInfo.CurrentCulture.Name;
+            _toolDataService.Tools.TryGetValue(language, out var tool);
+            return View(tool);
         }
         [Route("Blogs")]
         public async Task<IActionResult> Blogs()
         {
             if (_blogDataService.Blogs.Count == 0)
             {
-                await _blogDataService.GetBlogData(_filePathBlog);
+                await _blogDataService.Aggregate();
             }
             return View(_blogDataService.Blogs);
         }
