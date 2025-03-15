@@ -1,5 +1,6 @@
 ﻿using MapleTools.Services.FileDataServices;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace MapleTools.Controllers
 {
@@ -10,12 +11,9 @@ namespace MapleTools.Controllers
 
         private string _filePath;
 
-        private IWebHostEnvironment _webHostEnvironment;
-        public BossController(BossDataService bossDataService, IWebHostEnvironment webHostEnvironment)
+        public BossController(BossDataService bossDataService)
         {
             _bossDataService = bossDataService;
-            _webHostEnvironment = webHostEnvironment;
-            _filePath = _webHostEnvironment.ContentRootPath + @"\Simulation\bosses.json";    
         }
         [Route("")]
         public async Task<IActionResult> Index()
@@ -24,7 +22,9 @@ namespace MapleTools.Controllers
             {
                 await _bossDataService.Aggregate();
             }
-            return View(_bossDataService.Bosses);
+            var language = CultureInfo.CurrentCulture.Name;
+            _bossDataService.Bosses.TryGetValue(language, out var result);
+            return View(result);
         }
     }
 }

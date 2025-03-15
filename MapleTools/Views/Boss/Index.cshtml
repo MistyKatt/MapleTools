@@ -1,6 +1,7 @@
 ﻿@model List<MapleTools.Models.Boss.Boss>
-@{
 
+@section Styles{
+    <link href="~/css/Home/Bosses/bosses.css" rel="stylesheet" />
 }
 
 
@@ -25,7 +26,7 @@
                 <tr class="bg-light">
                     <!-- Merged Boss Info -->
                     <td rowspan="@(boss.Difficulties.Count + 1)" class="text-center">
-                        <img src="@boss.ImageUrl" class="img-thumbnail mb-2" style="max-width: 120px">
+                        <img src="/img/@boss.ImageUrl" class="img-thumbnail mb-2" style="max-width: 120px">
                         <h5>@boss.Name</h5>
                         <a href="@boss.DetailsUrl" class="btn btn-sm btn-outline-primary mt-2">
                             Details <i class="fas fa-arrow-right"></i>
@@ -39,7 +40,14 @@
                         <td class="text-uppercase fw-bold">@difficulty.Key</td>
                         <td>
                             <div class="d-flex justify-content-between">
-                                <span>Total HP: @string.Join(" + ", difficulty.Value.Hp.Phase1, difficulty.Value.Hp.Phase2, difficulty.Value.Hp.Phase3)</span>
+                                @{
+                                    var hp = difficulty.Value.Hp.Phase1 + " + ";
+                                    hp = string.IsNullOrEmpty(difficulty.Value.Hp.Phase2) ? hp : hp + difficulty.Value.Hp.Phase2 + " + ";
+                                    hp = string.IsNullOrEmpty(difficulty.Value.Hp.Phase3) ? hp : hp + difficulty.Value.Hp.Phase3 + " + ";
+                                    hp = string.IsNullOrEmpty(difficulty.Value.Hp.Phase4) ? hp : hp + difficulty.Value.Hp.Phase4 + " + ";
+                                    hp = hp.Substring(0, hp.Length - 3);
+                                }
+                                <span>Total HP: @hp</span>
                             </div>
                             <hr class="my-1">
                             <small class="text-muted">Blue Light: @difficulty.Value.BlueLightHp</small>
@@ -57,8 +65,16 @@
                             <ul class="list-unstyled mb-0">
                                 @foreach (var item in difficulty.Value.Loot)
                                 {
-                                    <li class="text-truncate" title="@item">
-                                        <i class="fas fa-cube me-2 text-primary"></i>@item
+                                    var itemArr = item.Split('|');
+                                    var itemName = itemArr[0];
+                                    var itemPath = itemArr.Length == 2 ? $"/img/loots/{itemArr[1]}" : "dummy.png";
+                                    <li class="text-truncate" title="@itemName">
+                                        <div class="icon-wrapper">
+                                            <img src="@itemPath"
+                                                 class="equip-icon"
+                                                 alt="@itemName"
+                                                 loading="lazy">
+                                        </div>
                                     </li>
                                 }
                             </ul>

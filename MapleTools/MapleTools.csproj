@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Data\Bosses\Lotus\" />
     <Folder Include="FileStorage\" />
     <Folder Include="Resources\" />
+    <Folder Include="wwwroot\img\loots\" />
   </ItemGroup>
 
   <ItemGroup>
