@@ -1,10 +1,15 @@
-﻿using MapleTools.Models;
+﻿using MapleTools.Abstraction;
+using MapleTools.Factory;
+using MapleTools.Models;
+using MapleTools.Models.Boss;
+using MapleTools.Models.Content;
 using MapleTools.Services.ApiDataServices;
 using MapleTools.Services.FileDataServices;
 using MapleTools.Simulation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Concurrent;
 using System.Globalization;
 
 namespace MapleTools.Controllers
@@ -12,21 +17,25 @@ namespace MapleTools.Controllers
     [Route("")]
     public class HomeController : Controller
     {
-        private BanListService _banListService;
-        private TrendingService _trendingService;
-        private FarmingService _farmingService;
-        private ToolDataService _toolDataService;
-        private BlogDataService _blogDataService;
+        private DataServiceFactory _dataServiceFactory;
+        private IDataService<Dictionary<string, List<Player>>> _banListService;
+        private IDataService<Dictionary<string, List<Player>>> _farmingService;
+        private IDataService<Dictionary<string, List<(string, int)>>> _trendingService;
+        private IDataService<ConcurrentDictionary<string, List<Blog>>> _blogDataService;       
+        private IDataService<ConcurrentDictionary<string, List<Tool>>> _toolDataService;
+
         private IWebHostEnvironment _webHostEnvironment;
 
-        public HomeController(BanListService banListService, TrendingService trendingService, FarmingService farmingService, ToolDataService toolDataService, BlogDataService blogDataService, IWebHostEnvironment webHostEnvironment)
+        public HomeController(DataServiceFactory dataServiceFactory, IWebHostEnvironment webHostEnvironment)
         {
-            _banListService = banListService;
-            _trendingService = trendingService;
-            _farmingService = farmingService;
+
+            _dataServiceFactory = dataServiceFactory;
+            _banListService = _dataServiceFactory.BanListInstance();
+            _trendingService = _dataServiceFactory.TrendingInstance();
+            _farmingService = _dataServiceFactory.FarmingInstance();
             _webHostEnvironment = webHostEnvironment;
-            _toolDataService = toolDataService;
-            _blogDataService = blogDataService;
+            _toolDataService = _dataServiceFactory.ToolDataInstance();
+            _blogDataService = _dataServiceFactory.BlogDataInstance();
         }
 
         [Route("")]
@@ -38,26 +47,26 @@ namespace MapleTools.Controllers
         [Route("BanList")]
         public async Task<IActionResult> BanList()
         {
-            if(_banListService.Aggregated.Count == 0)
+            if(_banListService.Data.Count == 0)
             {
                 await _banListService.Aggregate();
             }
             var banlist = new BanList()
             {
-                BannedPlayers = _banListService.Aggregated
+                BannedPlayers = _banListService.Data
             };
             return View(banlist);
         }
         [Route("Trending")]
         public async Task<IActionResult> Trending()
         {
-            if (_trendingService.Aggregated.Count == 0)
+            if (_trendingService.Data.Count == 0)
             {
                 await _trendingService.Aggregate();
             }
             var trending = new Trending()
             {
-                JobTrending = _trendingService.Aggregated
+                JobTrending = _trendingService.Data
             };
             return View(trending);
         }
@@ -65,35 +74,38 @@ namespace MapleTools.Controllers
         [Route("Farming")]
         public async Task<IActionResult> Farming()
         {
-            if (_farmingService.Aggregated.Count == 0)
+            if (_farmingService.Data.Count == 0)
             {
                 await _farmingService.Aggregate();
             }
             var farming = new Farming()
             {
-                FarmingPlayers = _farmingService.Aggregated
+                FarmingPlayers = _farmingService.Data
             };
             return View(farming);
         }
         [Route("Tools")]
         public async Task<IActionResult> Tools()
         {
-            if (_toolDataService.Tools.Count == 0)
+            if (_toolDataService.Data.Count == 0)
             {
                 await _toolDataService.Aggregate();
             }
             var language = CultureInfo.CurrentCulture.Name;
-            _toolDataService.Tools.TryGetValue(language, out var tool);
+            _toolDataService.Data.TryGetValue(language, out var tool);
             return View(tool);
         }
         [Route("Blogs")]
         public async Task<IActionResult> Blogs()
         {
-            if (_blogDataService.Blogs.Count == 0)
+            if (_blogDataService.Data.Count == 0)
             {
                 await _blogDataService.Aggregate();
             }
-            return View(_blogDataService.Blogs);
+            var language = CultureInfo.CurrentCulture.Name;
+            _blogDataService.Data.TryGetValue(language, out var blog);
+            var result = blog?.GroupBy(b=>b.Stage).ToDictionary(g=>g.Key, g=>g.ToList());
+            return View(result);
         }
 
     }

@@ -7,38 +7,27 @@ using System.Collections.Concurrent;
 
 namespace MapleTools.Services.FileDataServices
 {
-    public class ToolDataService : FileDataService
+    public class ToolDataService : FileDataService<ConcurrentDictionary<string, List<Tool>>>
     {
-        private ConcurrentDictionary<string, List<Tool>> _tools;
 
-        private Dictionary<string,string> _filePath;
-
-        public ToolDataService(IOptions<ServiceOptions> serviceOptions, IWebHostEnvironment webHostEnvironment, IOptions<LocalizationOptions> options) : base()
+        public ToolDataService(IOptions<ServiceOptions> serviceOptions,IFileAccessor fileAccessor, IWebHostEnvironment webHostEnvironment, IOptions<LocalizationOptions> options) : base(fileAccessor,options)
         {
-            _tools = new ConcurrentDictionary<string, List<Tool>>();
-            _filePath = new Dictionary<string, string>();
-            foreach (var language in options.Value.Languages ?? ["en", "zh-CN"])
+            Data = new ConcurrentDictionary<string, List<Tool>>();
+            FilePath = new Dictionary<string, string>();
+            foreach (var language in Languages)
             {
-                _filePath.Add(language, Path.Combine(webHostEnvironment.ContentRootPath, serviceOptions.Value?.ToolDataService ?? "Data\\Tools", $"{language}.json"));
+                FilePath.Add(language, Path.Combine(webHostEnvironment.ContentRootPath, serviceOptions.Value?.ToolDataService ?? "Data\\Tools", $"{language}.json"));
             }
         }
 
-        public ConcurrentDictionary<string, List<Tool>> Tools { get { return _tools; } }
-
         public async override Task Aggregate()
         {
-            if (Tools.Count > 0)
+            if (Data.Count > 0)
                 return;
-            foreach (var path in _filePath)
+            foreach (var path in FilePath)
             {
-                if (File.Exists(path.Value) && path.Value.EndsWith("json"))
-                {
-                    using (StreamReader rs = new StreamReader(path.Value))
-                    {
-                        var result = await rs.ReadToEndAsync();
-                        _tools.TryAdd(path.Key,JsonConvert.DeserializeObject<List<Tool>>(result) ?? new List<Tool>());
-                    }
-                }
+                var result = await FileAccessor.JsonFileReader<List<Tool>>(path.Value);
+                Data.TryAdd(path.Key, result);
             }
             await base.Aggregate();
         }

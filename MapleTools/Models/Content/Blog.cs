@@ -16,6 +16,6 @@ namespace MapleTools.Models.Content
         public required bool IsExternal { get; set; }
 
         [JsonProperty("game stage")]
-        public int Stage {  get; set; }
+        public string Stage {  get; set; }
     }
 }

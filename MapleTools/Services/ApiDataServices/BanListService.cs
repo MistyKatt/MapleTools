@@ -9,9 +9,9 @@ namespace MapleTools.Services.ApiDataServices
     /// <summary>
     /// Take List<player> as input and generate job:List<player> dictionary as result
     /// </summary>
-    public class BanListService : ApiDataService
+    public class BanListService : ApiDataService<Dictionary<string, List<Player>>>
     {
-        private Dictionary<string, List<Player>> _aggregated;
+
 
         private readonly string _name = "BanList";
 
@@ -19,17 +19,16 @@ namespace MapleTools.Services.ApiDataServices
 
         public BanListService(IOptions<ServiceOptions> serviceOptions):base()
         {
-            _aggregated = new Dictionary<string, List<Player>>();
+            Data = new Dictionary<string, List<Player>>();
             _endpoint = serviceOptions.Value?.BanListService??"dummy";
         }
 
-        public Dictionary<string, List<Player>> Aggregated { get { return _aggregated; } }
         public async override Task Aggregate()
         {
-            if (_aggregated.Count == 0)
+            if (Data.Count == 0)
             {
                 var players = DummyData.BannedPlayers;
-                _aggregated = players
+                Data = players
                     .GroupBy(p => p.JobID)
                     .ToDictionary(
                         g => g.Key.ToString(),

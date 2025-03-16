@@ -10,7 +10,7 @@
 
         public string? TrendingService { get; set; }
 
-        public string? BlogService { get; set; }
+        public string? BlogDataService { get; set; }
 
         public string? BossDataService { get; set; }
 

@@ -9,9 +9,8 @@ namespace MapleTools.Services.ApiDataServices
     /// <summary>
     /// Take List<player> as input and return job:List<player> as output
     /// </summary>
-    public class FarmingService : ApiDataService
+    public class FarmingService : ApiDataService<Dictionary<string, List<Player>>>
     {
-        private Dictionary<string, List<Player>> _aggregated;
 
         private readonly string _name = "Farming";
 
@@ -19,17 +18,15 @@ namespace MapleTools.Services.ApiDataServices
 
         public FarmingService(IOptions<ServiceOptions> serviceOptions):base()
         {
-            _aggregated = new Dictionary<string, List<Player>>();
+            Data = new Dictionary<string, List<Player>>();
             _endpoint = serviceOptions.Value?.FarmingService??"dummy";
         }
-
-        public Dictionary<string, List<Player>> Aggregated { get { return _aggregated; } }
         public async override Task Aggregate()
         {
-            if (_aggregated.Count == 0)
+            if (Data.Count == 0)
             {
                 var players = DummyData.FarmingPlayers;
-                _aggregated.Add("Kronos", players.OrderByDescending(p=>p.Gap).ToList());                  
+                Data.Add("Kronos", players.OrderByDescending(p=>p.Gap).ToList());                  
             }
         }
 

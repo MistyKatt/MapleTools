@@ -5,7 +5,7 @@
     "external link": null,
     "internal link": "/blogs/early-game-guide",
     "is external": false,
-    "game stage": 0
+    "game stage": "0"
   },
   {
     "blog title": "Mid Game Gear Optimization Roadmap",
@@ -13,7 +13,7 @@
     "external link": "https://external-bloghub.com/mid-gear",
     "internal link": null,
     "is external": true,
-    "game stage": 1
+    "game stage": "1"
   },
   {
     "blog title": "Late Game Boss Mechanics: Black Mage",
@@ -21,7 +21,7 @@
     "external link": null,
     "internal link": "/blogs/black-mage-guide",
     "is external": false,
-    "game stage": 2
+    "game stage": "2"
   },
   {
     "blog title": "Early Game Fast Leveling Routes (1-200)",
@@ -29,7 +29,7 @@
     "external link": null,
     "internal link": "/blogs/leveling-guide",
     "is external": false,
-    "game stage": 0
+    "game stage": "0"
   },
   {
     "blog title": "Mid Game Meso Farming Guide",
@@ -37,7 +37,7 @@
     "external link": "https://mesoguide.pro/mid-game",
     "internal link": null,
     "is external": true,
-    "game stage": 1
+    "game stage": "1"
   },
   {
     "blog title": "Early Game Fast Leveling Routes (1-200)",
@@ -45,7 +45,7 @@
     "external link": null,
     "internal link": "/blogs/leveling-guide",
     "is external": false,
-    "game stage": 2
+    "game stage": "2"
   },
   {
     "blog title": "Mid Game Meso Farming Guide",
@@ -53,7 +53,7 @@
     "external link": "https://mesoguide.pro/mid-game",
     "internal link": null,
     "is external": true,
-    "game stage": 0
+    "game stage": "0"
   }
 ]
 

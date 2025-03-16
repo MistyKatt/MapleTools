@@ -3,8 +3,9 @@
     /// <summary>
     /// Aggregate data from various datasource
     /// </summary>
-    public interface IDataService
+    public interface IDataService<T>
     {
+        public T Data {  get; set; }
         public Task Aggregate();
     }
 }

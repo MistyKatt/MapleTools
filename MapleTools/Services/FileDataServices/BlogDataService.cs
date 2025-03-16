@@ -5,42 +5,32 @@ using MapleTools.Models.Content;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace MapleTools.Services.FileDataServices
 {
-    public class BlogDataService:FileDataService
+    public class BlogDataService : FileDataService<ConcurrentDictionary<string, List<Blog>>>
     {
-        private Dictionary<int, List<Blog>> _blogs;
 
-        private string _filePath;
-
-        public BlogDataService(IOptions<ServiceOptions> serviceOptions, IWebHostEnvironment webHostEnvironment, IOptions<LocalizationOptions> options) : base()
+        public BlogDataService(IOptions<ServiceOptions> serviceOptions,IFileAccessor fileAccessor, IWebHostEnvironment webHostEnvironment, IOptions<LocalizationOptions> options) : base(fileAccessor, options)
         {
-            _blogs = new Dictionary<int, List<Blog>>();
-            _filePath = Path.Combine(webHostEnvironment.ContentRootPath, serviceOptions.Value?.BlogService ?? "dummy");
-
+            Data = new ConcurrentDictionary<string, List<Blog>>();
+            FilePath = new Dictionary<string, string>();
+            foreach (var language in Languages)
+            {
+                FilePath.Add(language, Path.Combine(webHostEnvironment.ContentRootPath, serviceOptions.Value?.BlogDataService ?? "dummy"));
+            }
         }
-
-        public Dictionary<int, List<Blog>> Blogs { get { return _blogs; } }
 
         public async override Task Aggregate()
         {
-            if (Blogs.Count > 0)
+            if (Data.Count > 0)
                 return;
-            if (File.Exists(_filePath) && _filePath.EndsWith("json"))
+            foreach (var path in FilePath)
             {
-                using (StreamReader rs = new StreamReader(_filePath))
-                {
-                    var result = await rs.ReadToEndAsync();
-                    var blogs = JsonConvert.DeserializeObject<List<Blog>>(result) ?? new List<Blog>();
-                    _blogs = blogs
-                        .GroupBy(b => b.Stage)
-                        .ToDictionary
-                        (
-                            b => b.Key,
-                            b => b.ToList()
-                        );
-                }
+                var result = await FileAccessor.JsonFileReader<List<Blog>>(path.Value);
+                Data.TryAdd(path.Key, result);
             }
             await base.Aggregate();
         }
