@@ -6,6 +6,8 @@
     public interface IDataService<T>
     {
         public T Data {  get; set; }
+
+        public string ServiceName { get; set; }
         public Task Aggregate();
     }
 }

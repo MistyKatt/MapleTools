@@ -13,14 +13,9 @@ namespace MapleTools.Services.FileDataServices
     public class BossDataService:FileDataService<ConcurrentDictionary<string, List<Boss>>>
     {
 
-        public BossDataService(IOptions<LocalizationOptions> cultureOptions,IFileAccessor fileAccessor,IOptions<ServiceOptions> serviceOptions, IWebHostEnvironment webHostEnvironment):base(fileAccessor, cultureOptions)
+        public BossDataService(IFileAccessor fileAccessor, string name):base(fileAccessor, name)
         {
-            Data = new ConcurrentDictionary<string, List<Boss>>();
-            FilePath = new Dictionary<string, string>();
-            foreach (var language in Languages)
-            {
-                FilePath.Add(language, Path.Combine(webHostEnvironment.ContentRootPath, serviceOptions.Value?.BossDataService ?? "Data\\Bosses", $"{language}.json"));
-            }
+            
         }
 
         public async override Task Aggregate()

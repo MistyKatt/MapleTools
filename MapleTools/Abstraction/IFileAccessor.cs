@@ -4,5 +4,7 @@
     {
         public Task<T> JsonFileReader<T>(string filePath);
 
+        public Task JsonFileWriter<T>(string filePath, T model);
+
     }
 }

@@ -16,7 +16,7 @@ namespace MapleTools.Services.ApiDataServices
 
         private string _endpoint;
 
-        public FarmingService(IOptions<ServiceOptions> serviceOptions):base()
+        public FarmingService(IOptions<ServiceOptions> serviceOptions, string name):base(name)
         {
             Data = new Dictionary<string, List<Player>>();
             _endpoint = serviceOptions.Value?.FarmingService??"dummy";

@@ -1,4 +1,5 @@
 ﻿using MapleTools.Localization;
+using MapleTools.Models.Content;
 using Microsoft.Extensions.Options;
 
 namespace MapleTools.Abstraction
@@ -9,11 +10,12 @@ namespace MapleTools.Abstraction
     public class FileDataService<T> : IDataService<T>
     {
         
-        public FileDataService(IFileAccessor fileAccessor, IOptions<LocalizationOptions> options)
+        public FileDataService(IFileAccessor fileAccessor, string name)
         {
             FileAccessor = fileAccessor;
             FilePath = new Dictionary<string, string>();
-            Languages = options.Value.Languages;
+            Languages = new List<string>();
+            ServiceName = name;
         }
 
         public IFileAccessor FileAccessor;
@@ -23,10 +25,14 @@ namespace MapleTools.Abstraction
         public List<string> Languages { get; set; }
 
         public T Data { get ; set ; }
+        public string ServiceName { get; set; }
 
         public virtual Task Aggregate()
         {
             return Task.CompletedTask;
         }
+
+        public virtual void Clear() { }
+
     }
 }

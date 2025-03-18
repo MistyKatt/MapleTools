@@ -14,7 +14,7 @@ namespace MapleTools.Services.ApiDataServices
 
         private string _endpoint;
 
-        public TrendingService(IOptions<ServiceOptions> serviceOptions)
+        public TrendingService(IOptions<ServiceOptions> serviceOptions,string name):base(name)
         {
             Data = new Dictionary<string, List<(string, int)>>();
             _endpoint = serviceOptions.Value?.TrendingService??"dummy";

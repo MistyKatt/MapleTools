@@ -6,12 +6,13 @@
     public class ApiDataService<T> : IDataService<T>
     {
 
-        public ApiDataService()
+        public ApiDataService(string name)
         {
-
+            ServiceName = name;
         }
 
         public T Data { get ; set ; }
+        public string ServiceName { get; set; }
 
         public virtual Task Aggregate()
         {

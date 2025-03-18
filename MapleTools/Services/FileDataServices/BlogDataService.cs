@@ -13,14 +13,9 @@ namespace MapleTools.Services.FileDataServices
     public class BlogDataService : FileDataService<ConcurrentDictionary<string, List<Blog>>>
     {
 
-        public BlogDataService(IOptions<ServiceOptions> serviceOptions,IFileAccessor fileAccessor, IWebHostEnvironment webHostEnvironment, IOptions<LocalizationOptions> options) : base(fileAccessor, options)
+        public BlogDataService(IFileAccessor fileAccessor, string name) : base(fileAccessor, name)
         {
-            Data = new ConcurrentDictionary<string, List<Blog>>();
-            FilePath = new Dictionary<string, string>();
-            foreach (var language in Languages)
-            {
-                FilePath.Add(language, Path.Combine(webHostEnvironment.ContentRootPath, serviceOptions.Value?.BlogDataService ?? "dummy"));
-            }
+            
         }
 
         public async override Task Aggregate()

@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Security.AccessControl;
 using MapleTools.Factory;
 using MapleTools.Util;
+using MapleTools.Models;
 
 namespace MapleTools.Extensions
 {

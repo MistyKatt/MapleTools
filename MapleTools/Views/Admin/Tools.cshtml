@@ -1,0 +1,50 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<MapleTools.Models.Content.Tool>
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Manage Tools</h2>
+        <a asp-action="EditTool" asp-route-mode="0" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Tool Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tool in Model)
+                    {
+                        <tr>
+                            <td>@tool.Name</td>
+                            <td class="text-truncate" style="max-width: 300px">@tool.Description</td>
+                            <td>
+                                <a asp-action="EditTool" asp-route-id="@tool.Id" asp-route-mode="1"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>EditTool
+                                </a>
+                                <form asp-action="EditTool" asp-route-id="@tool.Id" asp-route-mode="2"
+                                      method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Are you sure?')">
+                                        <i class="fas fa-trash"></i>DeleteTool
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

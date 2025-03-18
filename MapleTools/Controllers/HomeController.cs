@@ -30,12 +30,12 @@ namespace MapleTools.Controllers
         {
 
             _dataServiceFactory = dataServiceFactory;
-            _banListService = _dataServiceFactory.BanListInstance();
-            _trendingService = _dataServiceFactory.TrendingInstance();
-            _farmingService = _dataServiceFactory.FarmingInstance();
+            _banListService = _dataServiceFactory.GetBanListService();
+            _trendingService = _dataServiceFactory.GetTrendingService();
+            _farmingService = _dataServiceFactory.GetFarmingService();
             _webHostEnvironment = webHostEnvironment;
-            _toolDataService = _dataServiceFactory.ToolDataInstance();
-            _blogDataService = _dataServiceFactory.BlogDataInstance();
+            _toolDataService = _dataServiceFactory.GetToolDataService();
+            _blogDataService = _dataServiceFactory.GetBlogDataService();
         }
 
         [Route("")]

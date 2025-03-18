@@ -5,6 +5,9 @@ namespace MapleTools.Models.Content
     
     public class Tool
     {
+        [JsonProperty("id")]
+        public required string Id { get; set; }
+        
         [JsonProperty("tool name")]
         public required string Name { get; set; }
         [JsonProperty("tool description")]

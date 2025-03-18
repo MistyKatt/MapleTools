@@ -10,14 +10,9 @@ namespace MapleTools.Services.FileDataServices
     public class ToolDataService : FileDataService<ConcurrentDictionary<string, List<Tool>>>
     {
 
-        public ToolDataService(IOptions<ServiceOptions> serviceOptions,IFileAccessor fileAccessor, IWebHostEnvironment webHostEnvironment, IOptions<LocalizationOptions> options) : base(fileAccessor,options)
+        public ToolDataService(IFileAccessor fileAccessor, string name) : base(fileAccessor, name)
         {
-            Data = new ConcurrentDictionary<string, List<Tool>>();
-            FilePath = new Dictionary<string, string>();
-            foreach (var language in Languages)
-            {
-                FilePath.Add(language, Path.Combine(webHostEnvironment.ContentRootPath, serviceOptions.Value?.ToolDataService ?? "Data\\Tools", $"{language}.json"));
-            }
+
         }
 
         public async override Task Aggregate()
@@ -30,6 +25,11 @@ namespace MapleTools.Services.FileDataServices
                 Data.TryAdd(path.Key, result);
             }
             await base.Aggregate();
+        }
+
+        public override void Clear()
+        {
+            Data.Clear();
         }
     }
 }

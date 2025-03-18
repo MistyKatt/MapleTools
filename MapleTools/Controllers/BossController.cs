@@ -21,7 +21,7 @@ namespace MapleTools.Controllers
         public BossController(DataServiceFactory dataServiceFactory)
         {
             _dataServiceFactory = dataServiceFactory;
-            _bossDataService = dataServiceFactory.BossDataInstance();
+            _bossDataService = dataServiceFactory.GetBossDataService();
         }
         [Route("")]
         public async Task<IActionResult> Index()
