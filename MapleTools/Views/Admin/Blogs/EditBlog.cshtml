@@ -1,4 +1,4 @@
-﻿@model MapleTools.Models.Content.Tool
+﻿@model MapleTools.Models.Content.Blog
 @using MapleTools.Controllers
 @{
     EditMode mode = (EditMode)ViewData["mode"];
@@ -7,25 +7,25 @@
 <div class="container mt-4">
     <div class="card shadow">
         <div class="card-header">
-            <h4 class="mb-0">@(mode == EditMode.Create ? "Create" : "Edit") Tool</h4>
+            <h4 class="mb-0">@(mode == EditMode.Create ? "Create" : "Edit") Blog</h4>
         </div>
         <div class="card-body">
-            <form asp-controller="Admin" asp-action="EditTool" asp-route-mode="@((mode == EditMode.Create)?"0":"1")" method="post">
+            <form asp-controller="Admin" asp-action="EditBlog" asp-route-mode="@((mode == EditMode.Create)?"0":"1")" method="post">
                 <div class="form-group mb-3">
                     <label asp-for="Id"></label>
                     <input asp-for="Id" type="hidden" class="form-control" value="@((mode == EditMode.Create)?Guid.NewGuid().ToString():Model.Id)" />
                     <span asp-validation-for="Id" class="text-danger"></span>
                 </div>
                 <div class="form-group mb-3">
-                    <label asp-for="Name"></label>
-                    <input asp-for="Name" class="form-control" placeholder="@((mode == EditMode.Create)?"":Model.Name)" />
-                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
                 </div>
 
                 <div class="form-group mb-3">
-                    <label asp-for="Description"></label>
-                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="@((mode == EditMode.Create)?"":Model.Description)"></textarea>
-                    <span asp-validation-for="Description" class="text-danger"></span>
+                    <label asp-for="HtmlContent"></label>
+                    <textarea asp-for="HtmlContent" class="form-control" rows="4" placeholder="@((mode == EditMode.Create)?"":Model.HtmlContent)"></textarea>
+                    <span asp-validation-for="HtmlContent" class="text-danger"></span>
                 </div>
 
                 <div class="form-group mb-3">
@@ -42,14 +42,20 @@
 
                 <div class="form-group mb-3">
                     <label asp-for="IsExternal"></label>
-                    <input asp-for="IsExternal" type="text" class="form-control" placeholder="@((mode == EditMode.Create)?"":Model.IsExternal.ToString())" />
+                    <input asp-for="IsExternal" type="text" class="form-control" />
                     <span asp-validation-for="IsExternal" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Stage"></label>
+                    <input asp-for="Stage" type="text" class="form-control"  />
+                    <span asp-validation-for="Stage" class="text-danger"></span>
                 </div>
 
                 <!-- Add other fields -->
 
                 <div class="d-flex justify-content-end gap-2">
-                    <a asp-action="Tools" class="btn btn-secondary">Cancel</a>
+                    <a asp-action="Blogs" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>

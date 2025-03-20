@@ -5,6 +5,8 @@ namespace MapleTools.Models.Boss
 {
     public class Boss
     {
+        [JsonProperty("id")]
+        public required string Id { get; set; }
         [JsonProperty("boss name")]
         public required string Name { get; set; }
 

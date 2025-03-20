@@ -1,0 +1,169 @@
+﻿@model MapleTools.Models.Boss.Boss
+@using MapleTools.Controllers
+@{
+    EditMode mode = (EditMode)ViewData["mode"];
+}
+
+@section Scripts{
+    <script>
+        function addLootItem(difficulty) {
+            const container = $(`div:has(> input[name^="Difficulties[${difficulty}].Loot"])`);
+            const index = container.find('input').length;
+
+            const newInput = $(`<input class="form-control mb-2"
+                name="Difficulties[${difficulty}].Loot[${index}]" />`);
+
+            container.append(newInput);
+        }
+    </script>
+}
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header">
+            <h4 class="mb-0">@(mode == EditMode.Create ? "Create" : "Edit") Boss</h4>
+        </div>
+        <div class="card-body">
+            <form asp-controller="Admin" asp-action="EditBoss" asp-route-mode="@((mode == EditMode.Create)?"0":"1")" method="post">
+                <div class="form-group mb-3">
+                    <label asp-for="Id"></label>
+                    <input asp-for="Id" type="hidden" class="form-control" value="@((mode == EditMode.Create)?Guid.NewGuid().ToString():Model.Id)" />
+                    <span asp-validation-for="Id" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Name"></label>
+                    <input asp-for="Name" class="form-control" placeholder="@((mode == EditMode.Create)?"":Model.Name)" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="ImageUrl"></label>
+                    <textarea asp-for="ImageUrl" class="form-control" rows="4" placeholder="@((mode == EditMode.Create)?"":Model.ImageUrl)"></textarea>
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="DetailsUrl"></label>
+                    <input asp-for="DetailsUrl" class="form-control" placeholder="@((mode == EditMode.Create)?"":Model.DetailsUrl)" />
+                    <span asp-validation-for="DetailsUrl" class="text-danger"></span>
+                </div>
+
+                @foreach(var difficulty in Model.Difficulties)
+                {
+                    var diffKey = difficulty.Key;
+                    var diffValue = difficulty.Value;
+                    <div class="card mb-4">
+                        <div class="card-header">@diffKey Difficulty</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="Difficulties[diffKey].Money">Mesos</label>
+                                        <input asp-for="Difficulties[diffKey].Money"
+                                               class="form-control" />
+                                    </div>
+                                </div>
+                                <!-- Other fields -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="Difficulties[diffKey].ArcaneSymbol">Arc</label>
+                                        <input asp-for="Difficulties[diffKey].ArcaneSymbol"
+                                               class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="Difficulties[diffKey].SacredSymbol">Sac</label>
+                                        <input asp-for="Difficulties[diffKey].SacredSymbol"
+                                               class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="Difficulties[diffKey].BlueLightHp">5% hp</label>
+                                        <input asp-for="Difficulties[diffKey].BlueLightHp"
+                                               class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="Difficulties[diffKey].Level">boss level</label>
+                                        <input asp-for="Difficulties[diffKey].Level"
+                                               class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label asp-for="Difficulties[diffKey].Defense">5% hp</label>
+                                        <input asp-for="Difficulties[diffKey].Defense"
+                                               class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- HP Phases -->
+                            <div class="card mt-3">
+                                <div class="card-header">HP Phases</div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="Difficulties[diffKey].Hp.Phase1">Phase 1</label>
+                                                <input asp-for="Difficulties[diffKey].Hp.Phase1"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="Difficulties[diffKey].Hp.Phase2">Phase 2</label>
+                                                <input asp-for="Difficulties[diffKey].Hp.Phase2"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="Difficulties[diffKey].Hp.Phase3">Phase 3</label>
+                                                <input asp-for="Difficulties[diffKey].Hp.Phase3"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label asp-for="Difficulties[diffKey].Hp.Phase4">Phase 4</label>
+                                                <input asp-for="Difficulties[diffKey].Hp.Phase4"
+                                                       class="form-control" />
+                                            </div>
+                                        </div>
+                                        <!-- Add more phases as needed -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Loot Items -->
+                            <div class="mt-3">
+                                <h5>Loot Items</h5>
+                                @for (int i = 0; i < diffValue.Loot.Count; i++)
+                                {
+                                    <div class="form-group">
+                                        <input asp-for="Difficulties[diffKey].Loot[i]"
+                                               class="form-control mb-2" />
+                                    </div>
+                                }
+                                <button type="button" class="btn btn-sm btn-secondary"
+                                        onclick="addLootItem('@diffKey')">
+                                    Add Loot Item
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Add other fields -->
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Tools" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

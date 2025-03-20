@@ -63,19 +63,22 @@
                         <td>@difficulty.Value.Level</td>
                         <td>
                             <ul class="list-unstyled mb-0">
-                                @foreach (var item in difficulty.Value.Loot)
+                                @if (difficulty.Value.Loot != null)
                                 {
-                                    var itemArr = item.Split('|');
-                                    var itemName = itemArr[0];
-                                    var itemPath = itemArr.Length == 2 ? $"/img/loots/{itemArr[1]}" : "dummy.png";
-                                    <li class="text-truncate" title="@itemName">
-                                        <div class="icon-wrapper">
-                                            <img src="@itemPath"
-                                                 class="equip-icon"
-                                                 alt="@itemName"
-                                                 loading="lazy">
-                                        </div>
-                                    </li>
+                                    foreach (var item in difficulty.Value.Loot)
+                                    {
+                                        var itemArr = item.Split('|');
+                                        var itemName = itemArr[0];
+                                        var itemPath = itemArr.Length == 2 ? $"/img/loots/{itemArr[1]}" : "dummy.png";
+                                        <li class="text-truncate" title="@itemName">
+                                            <div class="icon-wrapper">
+                                                <img src="@itemPath"
+                                                class="equip-icon"
+                                                alt="@itemName"
+                                                loading="lazy">
+                                            </div>
+                                        </li>
+                                    }
                                 }
                             </ul>
                         </td>

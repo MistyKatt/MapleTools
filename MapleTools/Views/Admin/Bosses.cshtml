@@ -1,6 +1,52 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-<p>Placeholder bosses</p>
+﻿@model List<MapleTools.Models.Boss.Boss>
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Manage Bosses</h2>
+        <a asp-action="EditBoss" asp-route-mode="0" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Boss
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Boss Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var boss in Model)
+                    {
+                        <tr>
+                            <td>@boss.Name</td>
+                            <td>
+                                <a asp-action="EditBoss" asp-route-id="@boss.Id" asp-route-mode="1"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>EditBoss
+                                </a>
+                                <form asp-action="EditBoss" asp-route-id="@boss.Id" asp-route-mode="2"
+                                      method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Are you sure?')">
+                                        <i class="fas fa-trash"></i>DeleteBoss
+                                    </button>
+                                </form>
+                                <form asp-action="EditBossArticle" asp-route-id="@boss.Id"
+                                      method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Are you sure?')">
+                                        <i class="fas fa-trash"></i>EditBossArticle
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

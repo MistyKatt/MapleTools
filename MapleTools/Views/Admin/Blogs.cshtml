@@ -1,6 +1,47 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-<p>Placeholder blogs</p>
+﻿@model List<MapleTools.Models.Content.Blog>
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Manage Blogs</h2>
+        <a asp-action="EditBlog" asp-route-mode="0" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Blog
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Blog Name</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var blog in Model)
+                    {
+                        <tr>
+                            <td>@blog.Title</td>
+                            <td class="text-truncate" style="max-width: 300px">@blog.InternalLink</td>
+                            <td>
+                                <a asp-action="EditBlog" asp-route-id="@blog.Id" asp-route-mode="1"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>EditBlog
+                                </a>
+                                <form asp-action="EditBlog" asp-route-id="@blog.Id" asp-route-mode="2"
+                                      method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Are you sure?')">
+                                        <i class="fas fa-trash"></i>DeleteBlog
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
