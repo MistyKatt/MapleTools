@@ -1,6 +1,6 @@
 ﻿using MapleTools.Abstraction;
 using MapleTools.Localization;
-using MapleTools.Models.Content;
+using MapleTools.Models.Tool;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System.Collections.Concurrent;

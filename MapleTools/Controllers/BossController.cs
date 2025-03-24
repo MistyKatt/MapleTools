@@ -13,6 +13,7 @@ namespace MapleTools.Controllers
     {
 
         private IDataService<ConcurrentDictionary<string, List<Boss>>> _bossDataService;
+        private IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BossArticle>>> _bossArticleService;
 
         private DataServiceFactory _dataServiceFactory;
 
@@ -22,6 +23,7 @@ namespace MapleTools.Controllers
         {
             _dataServiceFactory = dataServiceFactory;
             _bossDataService = dataServiceFactory.GetBossDataService();
+            _bossArticleService = _dataServiceFactory.GetBossArticleService();
         }
         [Route("")]
         public async Task<IActionResult> Index()
@@ -33,6 +35,19 @@ namespace MapleTools.Controllers
             var language = CultureInfo.CurrentCulture.Name;
             _bossDataService.Data.TryGetValue(language, out var result);
             return View(result);
+        }
+
+        [Route("{articleName}")]
+        public async Task<IActionResult> BossArticle(string articleName)
+        {
+            if (_bossArticleService.Data.Count == 0)
+            {
+                await _bossArticleService.Aggregate();
+            }
+            var language = CultureInfo.CurrentCulture.Name;
+            _bossArticleService.Data.TryGetValue(language, out var bosses);
+            bosses.TryGetValue(articleName, out var article);
+            return View(article);
         }
     }
 }

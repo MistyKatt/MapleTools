@@ -1,5 +1,5 @@
 ﻿using MapleTools.Abstraction;
-using MapleTools.Models;
+using MapleTools.Models.Api;
 using MapleTools.Services.Cache;
 using MapleTools.Simulation;
 using Microsoft.Extensions.Options;

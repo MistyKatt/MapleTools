@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace MapleTools.Models
+namespace MapleTools.Models.Api
 {
     public class Player
     {

@@ -28,18 +28,15 @@
                                    class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-edit"></i>EditBoss
                                 </a>
+                                <a asp-action="EditBossArticle" asp-route-id="@boss.Id" asp-route-path="@boss.DetailsUrl"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>EditBossArticle
+                                </a>
                                 <form asp-action="EditBoss" asp-route-id="@boss.Id" asp-route-mode="2"
                                       method="post" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-outline-danger"
                                             onclick="return confirm('Are you sure?')">
                                         <i class="fas fa-trash"></i>DeleteBoss
-                                    </button>
-                                </form>
-                                <form asp-action="EditBossArticle" asp-route-id="@boss.Id"
-                                      method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                            onclick="return confirm('Are you sure?')">
-                                        <i class="fas fa-trash"></i>EditBossArticle
                                     </button>
                                 </form>
                             </td>

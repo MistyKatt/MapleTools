@@ -1,4 +1,4 @@
-﻿@model MapleTools.Models.BanList
+﻿@model  MapleTools.Models.Api.BanList
 @{
     var keys = Model.BannedPlayers.Keys;
 }
@@ -25,7 +25,7 @@
     <div id="banlistAccordion">
         @foreach (var jobGroup in keys)
         {
-            var players = Model.BannedPlayers.GetValueOrDefault(jobGroup) ?? new List<Player>();
+            var players = Model.BannedPlayers.GetValueOrDefault(jobGroup);
             <div class="card mb-2 border-0">
                 <div class="card-header" id="heading-@jobGroup">
                     <h5 class="mb-0">
@@ -46,7 +46,7 @@
                      aria-labelledby="heading-@jobGroup">
                     <div class="card-body p-2">
                         <div class="list-group list-group-flush">
-                            @foreach (var player in Model.BannedPlayers.GetValueOrDefault(jobGroup)??new List<Player>())
+                            @foreach (var player in Model.BannedPlayers.GetValueOrDefault(jobGroup))
                             {
                                 <div class="list-group-item list-group-item-action p-2 border-0">
                                     <div class="d-flex justify-content-between align-items-center">

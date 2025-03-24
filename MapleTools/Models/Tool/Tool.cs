@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace MapleTools.Models.Content
+namespace MapleTools.Models.Tool
 {
-    
-    public class Tool
+
+    public class Tool : IdBasedModel
     {
-        [JsonProperty("id")]
-        public required string Id { get; set; }
-        
+
         [JsonProperty("tool name")]
         public required string Name { get; set; }
         [JsonProperty("tool description")]
@@ -15,7 +13,7 @@ namespace MapleTools.Models.Content
         [JsonProperty("external link")]
         public string? ExternalLink { get; set; }
         [JsonProperty("internal link")]
-        public string? InternalLink {  get; set; }
+        public string? InternalLink { get; set; }
         [JsonProperty("is external")]
         public required bool IsExternal { get; set; }
     }

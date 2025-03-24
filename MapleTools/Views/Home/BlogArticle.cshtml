@@ -1,0 +1,70 @@
+﻿@model MapleTools.Models.Content.BlogArticle
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Blog Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 article-title">@Model.ContentPath</h1>
+            </div>
+
+            <!-- Blog Content -->
+            <div class="article-content mb-5">
+                @Html.Raw(Model.HtmlContent)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .article-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #4a5568;
+        }
+
+            .article-content img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 8px;
+                margin: 2rem 0;
+            }
+
+            .article-content h2,
+            .article-content h3 {
+                color: #2c3e50;
+                margin-top: 2.5rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .article-content table {
+                width: 100%;
+                margin: 2rem 0;
+                border-collapse: collapse;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            }
+
+            .article-content th,
+            .article-content td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #e2e8f0;
+            }
+
+            .article-content th {
+                background-color: #f8f9fa;
+                font-weight: 600;
+            }
+
+        .meta-info {
+            font-size: 0.95rem;
+        }
+    </style>
+}

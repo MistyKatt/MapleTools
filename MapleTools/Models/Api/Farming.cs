@@ -1,4 +1,4 @@
-﻿namespace MapleTools.Models
+﻿namespace MapleTools.Models.Api
 {
     public class Farming
     {

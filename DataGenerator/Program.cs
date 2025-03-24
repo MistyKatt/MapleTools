@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 using Newtonsoft.Json;
-using MapleTools.Models;
+using MapleTools.Models.Api;
 
 namespace DataGenerator
 {

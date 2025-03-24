@@ -20,12 +20,13 @@ namespace MapleTools.Services.FileDataServices
 
         public async override Task Aggregate()
         {
-            if (Data.Count > 0)
-                return;
-            foreach (var path in FilePath)
+            if (Data.Count == 0)
             {
-                var result = await FileAccessor.JsonFileReader<List<Boss>>(path.Value);
-                Data.TryAdd(path.Key, result);
+                foreach (var path in FilePath)
+                {
+                    var result = await FileAccessor.JsonFileReader<List<Boss>>(path.Value);
+                    Data.TryAdd(path.Key, result);
+                }
             }
             await base.Aggregate();
         }

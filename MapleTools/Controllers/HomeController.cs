@@ -1,8 +1,10 @@
 ﻿using MapleTools.Abstraction;
 using MapleTools.Factory;
 using MapleTools.Models;
+using MapleTools.Models.Api;
 using MapleTools.Models.Boss;
 using MapleTools.Models.Content;
+using MapleTools.Models.Tool;
 using MapleTools.Services.ApiDataServices;
 using MapleTools.Services.FileDataServices;
 using MapleTools.Simulation;
@@ -23,6 +25,8 @@ namespace MapleTools.Controllers
         private IDataService<Dictionary<string, List<(string, int)>>> _trendingService;
         private IDataService<ConcurrentDictionary<string, List<Blog>>> _blogDataService;       
         private IDataService<ConcurrentDictionary<string, List<Tool>>> _toolDataService;
+        
+        private IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BlogArticle>>> _blogArticleService;
 
         private IWebHostEnvironment _webHostEnvironment;
 
@@ -36,6 +40,8 @@ namespace MapleTools.Controllers
             _webHostEnvironment = webHostEnvironment;
             _toolDataService = _dataServiceFactory.GetToolDataService();
             _blogDataService = _dataServiceFactory.GetBlogDataService();
+            
+            _blogArticleService = _dataServiceFactory.BlogArticleService();
         }
 
         [Route("")]
@@ -106,6 +112,19 @@ namespace MapleTools.Controllers
             _blogDataService.Data.TryGetValue(language, out var blog);
             var result = blog?.GroupBy(b=>b.Stage).ToDictionary(g=>g.Key, g=>g.ToList());
             return View(result);
+        }
+
+        [Route("Blogs/{articleName}")]
+        public async Task<IActionResult> BlogArticle(string articleName)
+        {
+            if ( _blogArticleService.Data.Count == 0)
+            {
+                await _blogArticleService.Aggregate();
+            }
+            var language = CultureInfo.CurrentCulture.Name;
+            _blogArticleService.Data.TryGetValue(language, out var blogs);
+            blogs.TryGetValue(articleName, out var article);
+            return View(article);
         }
 
     }

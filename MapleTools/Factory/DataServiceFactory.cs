@@ -1,8 +1,9 @@
 ﻿using MapleTools.Abstraction;
 using MapleTools.Localization;
-using MapleTools.Models;
+using MapleTools.Models.Api;
 using MapleTools.Models.Boss;
 using MapleTools.Models.Content;
+using MapleTools.Models.Tool;
 using MapleTools.Services;
 using MapleTools.Services.ApiDataServices;
 using MapleTools.Services.FileDataServices;
@@ -40,6 +41,8 @@ namespace MapleTools.Factory
         private readonly Lazy<IDataService<ConcurrentDictionary<string, List<Blog>>>> _blogDataService;
         private readonly Lazy<IDataService<ConcurrentDictionary<string, List<Boss>>>> _bossDataService;
         private readonly Lazy<IDataService<ConcurrentDictionary<string, List<Tool>>>> _toolDataService;
+        private readonly Lazy<IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BossArticle>>>> _bossArticleService;
+        private readonly Lazy<IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BlogArticle>>>> _blogArticleService;
         public DataServiceFactory(IOptions<ServiceOptions> serviceOptions, IFileAccessor fileAccessor, IWebHostEnvironment webHostEnvironment, IOptions<LocalizationOptions> localizationOptions) 
         { 
             _serviceOptions = serviceOptions;
@@ -53,6 +56,8 @@ namespace MapleTools.Factory
             _blogDataService = new Lazy<IDataService<ConcurrentDictionary<string, List<Blog>>>>(() => BlogDataInstance());
             _bossDataService = new Lazy<IDataService<ConcurrentDictionary<string, List<Boss>>>>(() => BossDataInstance());
             _toolDataService = new Lazy<IDataService<ConcurrentDictionary<string, List<Tool>>>>(() => ToolDataInstance());
+            _bossArticleService = new Lazy<IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BossArticle>>>>(() => BossArticleInstance());
+            _blogArticleService = new Lazy<IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BlogArticle>>>>(() => BlogArticleInstance());
 
         }
 
@@ -81,10 +86,12 @@ namespace MapleTools.Factory
             var service = new BlogDataService(_fileAccessor, "BlogData");
             service.Data = new ConcurrentDictionary<string, List<Blog>>();
             service.FilePath = new Dictionary<string, string>();
-            foreach (var language in _localizationOptions.Value.Languages)
+            service.Languages = _localizationOptions.Value.Languages;
+            foreach (var language in service.Languages)
             {
                 service.FilePath.Add(language, Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value?.BlogDataService ?? "Data\\Blogs", $"{language}.json"));
             }
+            var rootPath = Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value?.BlogDataService ?? "Data\\Blogs");
             return service;
         }
 
@@ -94,10 +101,12 @@ namespace MapleTools.Factory
             var service = new BossDataService(_fileAccessor, "BossData");
             service.Data = new ConcurrentDictionary<string, List<Boss>>();
             service.FilePath = new Dictionary<string, string>();
-            foreach (var language in _localizationOptions.Value.Languages)
+            service.Languages = _localizationOptions.Value.Languages;
+            foreach (var language in service.Languages)
             {
                 service.FilePath.Add(language, Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value?.BossDataService ?? "Data\\Bosses", $"{language}.json"));
             }
+            var rootPath = Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value?.BossDataService ?? "Data\\Bosses");
             return service;
         }
 
@@ -107,7 +116,8 @@ namespace MapleTools.Factory
             var service = new ToolDataService(_fileAccessor, "ToolData");
             service.Data = new ConcurrentDictionary<string, List<Tool>>();
             service.FilePath = new Dictionary<string, string>();
-            foreach (var language in _localizationOptions.Value.Languages)
+            service.Languages = _localizationOptions.Value.Languages;
+            foreach (var language in service.Languages)
             {
                 service.FilePath.Add(language, Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value?.ToolDataService ?? "Data\\Tools", $"{language}.json"));
             }
@@ -115,5 +125,41 @@ namespace MapleTools.Factory
         }
 
         public IDataService<ConcurrentDictionary<string, List<Tool>>> GetToolDataService() => _toolDataService.Value;
+
+        public IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BossArticle>>> BossArticleInstance()
+        {
+            var service = new DetailedArticleService<BossArticle>(_fileAccessor, "BossDetail");
+            service.Data = new ConcurrentDictionary<string, ConcurrentDictionary<string, BossArticle>>();
+            service.ContentPath = new Dictionary<string, List<string>>();
+            var rootPath = Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value?.BossDataService ?? "Data\\Bosses");
+            service.Languages = _localizationOptions.Value.Languages;
+            foreach (var language in service.Languages)
+            {
+                var contents = Directory.GetDirectories(rootPath);
+                service.ContentPath.TryAdd(language, contents.Select(c => Path.Combine(c, $"{language}.json")).ToList());
+            }
+            return service;
+        }
+
+        public IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BossArticle>>> GetBossArticleService() => _bossArticleService.Value;
+
+        public IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BlogArticle>>> BlogArticleInstance()
+        {
+            var service = new DetailedArticleService<BlogArticle>(_fileAccessor, "BlogDetail");
+            service.Data = new ConcurrentDictionary<string, ConcurrentDictionary<string, BlogArticle>>();
+            service.ContentPath = new Dictionary<string, List<string>>();
+            var rootPath = Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value?.BossDataService ?? "Data\\Blogs");
+            service.Languages = _localizationOptions.Value.Languages;
+            foreach (var language in service.Languages)
+            {
+                var contents = Directory.GetDirectories(rootPath);
+                service.ContentPath.TryAdd(language, contents.Select(c => Path.Combine(c, $"{language}.json")).ToList());
+            }
+            return service;
+        }
+
+        public IDataService<ConcurrentDictionary<string, ConcurrentDictionary<string, BlogArticle>>> BlogArticleService() => _blogArticleService.Value;
+
+
     }
 }

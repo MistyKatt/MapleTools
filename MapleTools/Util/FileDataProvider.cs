@@ -1,6 +1,5 @@
 ﻿using MapleTools.Abstraction;
 using MapleTools.Localization;
-using MapleTools.Models.Content;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -13,13 +12,13 @@ namespace MapleTools.Util
         {
             _options = options;
         }
-        public async Task<T> JsonFileReader<T>(string filePath)
+        public async Task<T> JsonFileReader<T>(string filePath, string language)
         {
-            if (File.Exists(filePath) && filePath.EndsWith("json"))
+            if (File.Exists(filePath))
             {
-                var version = LatestVersion(filePath);
+                var version = LatestVersion(filePath, language);
                 //versioned file exists, read latest versioned file instead
-                if(!string.IsNullOrEmpty(version))
+                if (!string.IsNullOrEmpty(version))
                 {
                     var fileName = Path.GetFileNameWithoutExtension(filePath);
                     filePath = filePath.Replace(fileName, $"{fileName}_{version}");
@@ -33,20 +32,25 @@ namespace MapleTools.Util
             }
             return default(T);
         }
-
-        public async Task JsonFileWriter<T>(string rootPath, T model)
+        /// <summary>
+        /// Given a rootpath (folder), save the model data under the folder
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rootPath"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public async Task JsonFileWriter<T>(string rootPath, string language, T model)
         {
-            var firstFile = Directory.GetFiles(rootPath).FirstOrDefault();
-            if (firstFile != null)
+            if (!Directory.Exists(rootPath))
+                Directory.CreateDirectory(rootPath);
+            var filesInLanguage = Directory.GetFiles(rootPath).Where(f => Path.GetFileNameWithoutExtension(f).Contains(language));
+            if (filesInLanguage.Count() > 0)
             {
-                var latestVersion = LatestVersion(firstFile);
-                var language = Path.GetFileNameWithoutExtension(firstFile).Split('_')[0];
+                var latestVersion = LatestVersion(rootPath, language);
                 string newFileName;
                 if (int.TryParse(latestVersion, out var version))
                 {
-                    //new file to create
-                    newFileName = Path.Join(rootPath, language)+"_"+((version + 1) +".json");
-                    
+                    newFileName = Path.Join(rootPath, language) + "_" + ((version + 1) + ".json");
                 }
                 else
                 {
@@ -58,14 +62,23 @@ namespace MapleTools.Util
                     await sw.WriteAsync(str);
                 }
             }
+            else
+            {
+                var path = Path.Combine(rootPath, $"{language}.json");
+                using (StreamWriter sw = new StreamWriter(path))
+                {
+                    var str = JsonConvert.SerializeObject(model);
+                    await sw.WriteAsync(str);
+                }
+
+            }
         }
 
-        private string LatestVersion(string filePath)
+        private string LatestVersion(string filePath, string language)
         {
-            var fileLanguage = Path.GetFileNameWithoutExtension(filePath);
-            var dir = Path.GetDirectoryName(filePath);
-            var files = Directory.GetFiles(dir).Where(f=>f.Contains(fileLanguage)&&f!=filePath);
-            if(files.Count() == 0)
+
+            var files = Directory.GetFiles(filePath).Where(f => Path.GetFileNameWithoutExtension(f).Contains(language));
+            if (files.Count() <= 1)
             {
                 return "";
             }
@@ -75,12 +88,10 @@ namespace MapleTools.Util
                 var version = files.Select(f => Path.GetFileNameWithoutExtension(f)).Where(f => f.Split('_').Count() == 2).Select(f => int.Parse((f.Split('_')[1]))).Max();
                 return "" + version;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return "";
             }
         }
-
-        
     }
 }

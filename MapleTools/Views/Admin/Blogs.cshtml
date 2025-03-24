@@ -30,6 +30,10 @@
                                    class="btn btn-sm btn-outline-primary">
                                     <i class="fas fa-edit"></i>EditBlog
                                 </a>
+                                <a asp-action="EditBlogArticle" asp-route-id="@blog.Id" asp-route-path="@blog.InternalLink"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>EditBlogArticle
+                                </a>
                                 <form asp-action="EditBlog" asp-route-id="@blog.Id" asp-route-mode="2"
                                       method="post" class="d-inline">
                                     <button type="submit" class="btn btn-sm btn-outline-danger"
@@ -37,6 +41,7 @@
                                         <i class="fas fa-trash"></i>DeleteBlog
                                     </button>
                                 </form>
+                                
                             </td>
                         </tr>
                     }

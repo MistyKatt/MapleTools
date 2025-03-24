@@ -2,10 +2,8 @@
 
 namespace MapleTools.Models.Content
 {
-    public class Blog
+    public class Blog:IdBasedModel
     {
-        [JsonProperty("id")]
-        public required string Id { get; set; }
         [JsonProperty("blog title")]
         public required string Title { get; set; }
         [JsonProperty("tool description")]

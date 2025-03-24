@@ -1,6 +1,7 @@
 ﻿using MapleTools.Localization;
 using MapleTools.Models.Content;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 
 namespace MapleTools.Abstraction
 {
@@ -22,6 +23,7 @@ namespace MapleTools.Abstraction
         //Each language will have one file path
         public Dictionary<string, string> FilePath { get; set; }
 
+        public Dictionary<string,List<string>> ContentPath { get; set; }
         public List<string> Languages { get; set; }
 
         public T Data { get ; set ; }
