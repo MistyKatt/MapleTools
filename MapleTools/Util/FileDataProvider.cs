@@ -12,22 +12,20 @@ namespace MapleTools.Util
         {
             _options = options;
         }
-        public async Task<T> JsonFileReader<T>(string filePath, string language)
+        public async Task<T> JsonFileReader<T>(string rootPath, string language)
         {
-            if (File.Exists(filePath))
+            if (Directory.Exists(rootPath))
             {
-                var version = LatestVersion(filePath, language);
-                //versioned file exists, read latest versioned file instead
-                if (!string.IsNullOrEmpty(version))
+                var version = LatestVersion(rootPath, language);
+                var filePath = FileNameWithVersion(rootPath, language, version);
+                if (File.Exists(filePath))
                 {
-                    var fileName = Path.GetFileNameWithoutExtension(filePath);
-                    filePath = filePath.Replace(fileName, $"{fileName}_{version}");
-                }
-                using (StreamReader rs = new StreamReader(filePath))
-                {
-                    var result = await rs.ReadToEndAsync();
-                    var data = JsonConvert.DeserializeObject<T>(result) ?? default(T);
-                    return data;
+                    using (StreamReader rs = new StreamReader(filePath))
+                    {
+                        var result = await rs.ReadToEndAsync();
+                        var data = JsonConvert.DeserializeObject<T>(result) ?? default(T);
+                        return data;
+                    }
                 }
             }
             return default(T);
@@ -47,28 +45,24 @@ namespace MapleTools.Util
             if (filesInLanguage.Count() > 0)
             {
                 var latestVersion = LatestVersion(rootPath, language);
-                string newFileName;
-                if (int.TryParse(latestVersion, out var version))
-                {
-                    newFileName = Path.Join(rootPath, language) + "_" + ((version + 1) + ".json");
-                }
-                else
-                {
-                    newFileName = Path.Join(rootPath, language) + "_1.json";
-                }
+                var newFileName = CreateFileNameWithVersion(rootPath, language, latestVersion);
                 using (StreamWriter sw = new StreamWriter(newFileName))
                 {
                     var str = JsonConvert.SerializeObject(model);
                     await sw.WriteAsync(str);
                 }
             }
+            //initialize base file for each language
             else
             {
-                var path = Path.Combine(rootPath, $"{language}.json");
-                using (StreamWriter sw = new StreamWriter(path))
+                foreach (var lang in _options.Value.Languages)
                 {
-                    var str = JsonConvert.SerializeObject(model);
-                    await sw.WriteAsync(str);
+                    var path = Path.Combine(rootPath, $"{lang}.json");
+                    using (StreamWriter sw = new StreamWriter(path))
+                    {
+                        var str = JsonConvert.SerializeObject(model);
+                        await sw.WriteAsync(str);
+                    }
                 }
 
             }
@@ -77,8 +71,8 @@ namespace MapleTools.Util
         private string LatestVersion(string filePath, string language)
         {
 
-            var files = Directory.GetFiles(filePath).Where(f => Path.GetFileNameWithoutExtension(f).Contains(language));
-            if (files.Count() <= 1)
+            var files = Directory.GetFiles(filePath).Where(f => Path.GetFileNameWithoutExtension(f).Contains(language)).Where(f=>Path.GetFileNameWithoutExtension(f).Split('_').Count() == 2);
+            if (files.Count() == 0)
             {
                 return "";
             }
@@ -92,6 +86,36 @@ namespace MapleTools.Util
             {
                 return "";
             }
+        }
+
+        private string FileNameWithVersion(string rootPath, string language, string version)
+        {
+            var result = "";
+            if (int.TryParse(version, out var versionNumber))
+            {
+                result = Path.Join(rootPath, language) + "_" + ((versionNumber) + ".json");
+            }
+            else
+            {
+                result = Path.Join(rootPath, language) + ".json";
+            }
+            return result;
+        }
+
+        private string CreateFileNameWithVersion(string rootPath, string language, string version)
+        {
+            var result = "";
+            if (int.TryParse(version, out var versionNumber))
+            {
+                result = Path.Join(rootPath, language) + "_" + ((versionNumber+1) + ".json");
+            }
+            else if(File.Exists(Path.Join(rootPath, language) + ".json"))
+            {
+                result = Path.Join(rootPath, language) + "_1.json";
+            }
+            else
+                result = Path.Join(rootPath, language) + ".json";
+            return result;
         }
     }
 }

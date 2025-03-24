@@ -18,15 +18,16 @@ namespace MapleTools.Services.FileDataServices
         {
             if (Data.Count == 0)
             {
-                foreach (var keyValuePair in ContentPath)
+                foreach (var language in Languages)
                 {
                     var contents = new ConcurrentDictionary<string, T>();
-                    foreach(var path in keyValuePair.Value)
+                    var contentPath = Directory.GetDirectories(FilePath);
+                    foreach(var path in contentPath)
                     {
-                        var result = await FileAccessor.JsonFileReader<T>(path);
+                        var result = await FileAccessor.JsonFileReader<T>(path, language);
                         contents.TryAdd(result.ContentPath, result);
                     }
-                    Data.TryAdd(keyValuePair.Key, contents);
+                    Data.TryAdd(language, contents);
                 }
             }
             await base.Aggregate();

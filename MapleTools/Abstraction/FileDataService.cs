@@ -14,16 +14,13 @@ namespace MapleTools.Abstraction
         public FileDataService(IFileAccessor fileAccessor, string name)
         {
             FileAccessor = fileAccessor;
-            FilePath = new Dictionary<string, string>();
             Languages = new List<string>();
             ServiceName = name;
         }
 
         public IFileAccessor FileAccessor;
         //Each language will have one file path
-        public Dictionary<string, string> FilePath { get; set; }
-
-        public Dictionary<string,List<string>> ContentPath { get; set; }
+        public string FilePath { get; set; }
         public List<string> Languages { get; set; }
 
         public T Data { get ; set ; }

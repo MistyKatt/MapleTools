@@ -16,7 +16,7 @@
                         <div class="list-group list-group-flush">
                             @foreach (var blog in category.Value)
                             {
-                                <a href="/Blog/@(blog.InternalLink)"
+                                <a href="/Blogs/@(blog.InternalLink)"
                                    class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3"
                                    target="@(blog.IsExternal ? "_blank" : null)"
                                    rel="@(blog.IsExternal ? "noopener noreferrer" : null)">

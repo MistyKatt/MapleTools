@@ -41,7 +41,7 @@ namespace MapleTools.Controllers
             _toolDataService = _dataServiceFactory.GetToolDataService();
             _blogDataService = _dataServiceFactory.GetBlogDataService();
             
-            _blogArticleService = _dataServiceFactory.BlogArticleService();
+            _blogArticleService = _dataServiceFactory.GetBlogArticleService();
         }
 
         [Route("")]
@@ -124,6 +124,8 @@ namespace MapleTools.Controllers
             var language = CultureInfo.CurrentCulture.Name;
             _blogArticleService.Data.TryGetValue(language, out var blogs);
             blogs.TryGetValue(articleName, out var article);
+            if (article == null)
+                return RedirectToAction("index", "error");
             return View(article);
         }
 

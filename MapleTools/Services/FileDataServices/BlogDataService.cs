@@ -25,10 +25,10 @@ namespace MapleTools.Services.FileDataServices
             if (Data.Count == 0)
             {
 
-                foreach (var path in FilePath)
+                foreach (var language in Languages)
                 {
-                    var result = await FileAccessor.JsonFileReader<List<Blog>>(path.Value);
-                    Data.TryAdd(path.Key, result);
+                    var result = await FileAccessor.JsonFileReader<List<Blog>>(FilePath, language);
+                    Data.TryAdd(language, result);
                 }
             }
             await base.Aggregate();

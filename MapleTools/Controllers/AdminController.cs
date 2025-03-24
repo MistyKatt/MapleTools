@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 using System.Globalization;
-using System.Text.Json;
 
 namespace MapleTools.Controllers
 {
@@ -51,7 +50,7 @@ namespace MapleTools.Controllers
             _toolDataService = _dataServiceFactory.GetToolDataService();
             _bossDataService = _dataServiceFactory.GetBossDataService();
             _bossArticleService = _dataServiceFactory.GetBossArticleService();
-            _blogArticleService = _dataServiceFactory.BlogArticleService();
+            _blogArticleService = _dataServiceFactory.GetBlogArticleService();
             _webHostEnvironment = webHostEnvironment;
         }
         [Route("")]
@@ -61,7 +60,7 @@ namespace MapleTools.Controllers
         }
         [Route("bosses")]
         public async Task<IActionResult> Bosses()
-        {
+        {          
             if (_bossDataService.Data.Count == 0)
                 await _bossDataService.Aggregate();
             return View(_bossDataService.Data[CultureInfo.CurrentCulture.Name]);
@@ -89,6 +88,7 @@ namespace MapleTools.Controllers
                     () => _bossDataService.Data[CultureInfo.CurrentCulture.Name]);
             await PersistChange<List<Boss>>(
                     Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value.BossDataService ?? "Data\\Tools"),
+                    CultureInfo.CurrentCulture.Name,
                     result,
                     () => _bossDataService.Data.Clear()
                 );
@@ -118,13 +118,14 @@ namespace MapleTools.Controllers
         [Route("editbossarticle")]
         public async Task<IActionResult> EditBossArticle(BossArticle article, EditMode mode)
         {
-            var rootPath = Path.Combine(_webHostEnvironment.ContentRootPath,_serviceOptions.Value.BossDataService??"Data\\Bosses", article.ContentPath);
+            var rootPath = Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value.BossDataService ?? "Data\\Bosses", article.ContentPath);
             await PersistChange<BossArticle>(
                     rootPath,
+                    CultureInfo.CurrentCulture.Name,
                     article,
-                    () => _blogArticleService.Data.Clear()
+                    () => _bossArticleService.Data.Clear()
                 );
-        
+
             return RedirectToAction("Bosses", "Admin");
         }
 
@@ -158,6 +159,7 @@ namespace MapleTools.Controllers
                     () => _blogDataService.Data[CultureInfo.CurrentCulture.Name]);
             await PersistChange<List<Blog>>(
                     Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value.ToolDataService ?? "Data\\Blogs"),
+                    CultureInfo.CurrentCulture.Name,
                     result,
                     () => _blogDataService.Data.Clear()
                 );
@@ -187,9 +189,10 @@ namespace MapleTools.Controllers
         [Route("editblogarticle")]
         public async Task<IActionResult> EditBlogArticle(BossArticle article, EditMode mode)
         {
-            var rootPath = Path.Combine(_webHostEnvironment.ContentRootPath,_serviceOptions.Value.BlogDataService??"Data\\Blog", article.ContentPath);
+            var rootPath = Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value.BlogDataService ?? "Data\\Blog", article.ContentPath);
             await PersistChange<BossArticle>(
                     rootPath,
+                    CultureInfo.CurrentCulture.Name,
                     article,
                     () => _blogArticleService.Data.Clear()
                 );
@@ -226,6 +229,7 @@ namespace MapleTools.Controllers
                     () => _toolDataService.Data[CultureInfo.CurrentCulture.Name]);
             await PersistChange<List<Tool>>(
                     Path.Combine(_webHostEnvironment.ContentRootPath, _serviceOptions.Value.ToolDataService ?? "Data\\Tools"),
+                    CultureInfo.CurrentCulture.Name,
                     result,
                     () => _toolDataService.Data.Clear()
                 );
@@ -236,7 +240,7 @@ namespace MapleTools.Controllers
             Func<Task> aggregate,
             Func<List<T>> getData,
             string id
-            ) where T:IdBasedModel
+            ) where T : IdBasedModel
         {
             await aggregate();
             var result = getData();
@@ -276,9 +280,9 @@ namespace MapleTools.Controllers
             return data;
         }
 
-        private async Task PersistChange<T>(string filePath, T result, Action ClearCache)
+        private async Task PersistChange<T>(string filePath, string language, T result, Action ClearCache)
         {
-            await _fileAccessor.JsonFileWriter<T>(filePath, result);
+            await _fileAccessor.JsonFileWriter<T>(filePath, language, result);
             ClearCache();
         }
 
