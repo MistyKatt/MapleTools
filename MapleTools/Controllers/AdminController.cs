@@ -236,20 +236,6 @@ namespace MapleTools.Controllers
             return RedirectToAction("Tools", "Admin");
         }
 
-        private async Task<T> GenerateEntity<T>(
-            Func<Task> aggregate,
-            Func<List<T>> getData,
-            string id
-            ) where T : IdBasedModel
-        {
-            await aggregate();
-            var result = getData();
-            var model = result.FirstOrDefault(t => t.Id == id);
-            if (model == null)
-                model = result.FirstOrDefault();
-            return model;
-        }
-
         private List<T> ProcessEntity<T>(
         T entity,
         EditMode mode,
@@ -282,7 +268,7 @@ namespace MapleTools.Controllers
 
         private async Task PersistChange<T>(string filePath, string language, T result, Action ClearCache)
         {
-            await _fileAccessor.JsonFileWriter<T>(filePath, language, result);
+            await _fileAccessor.JsonFileWriter<T>(filePath, language, Util.SaveMode.VersionAndLanguage, result);
             ClearCache();
         }
 

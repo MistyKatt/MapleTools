@@ -9,6 +9,7 @@ using System.Security.AccessControl;
 using MapleTools.Factory;
 using MapleTools.Util;
 using MapleTools.Models;
+using MapleTools.Services.BackgroundServices;
 
 namespace MapleTools.Extensions
 {
@@ -32,6 +33,21 @@ namespace MapleTools.Extensions
         {
             services.AddSingleton<DataServiceFactory>();
             services.AddSingleton<IFileAccessor, FileDataProvider>();
+            return services;
+        }
+
+        public static IServiceCollection AddPlayerDataBackgroundService(this IServiceCollection services)
+        {
+            // Register the HTTP client factory
+            services.AddHttpClient("PlayerDataApi", client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+                // You can configure additional settings for the HTTP client here
+            });
+
+            // Register the background service
+            services.AddHostedService<PlayerBackgroundService>();
+
             return services;
         }
     }

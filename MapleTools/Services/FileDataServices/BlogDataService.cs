@@ -1,14 +1,7 @@
 ﻿using MapleTools.Abstraction;
-using MapleTools.Localization;
-using MapleTools.Models.Boss;
 using MapleTools.Models.Content;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.CompilerServices;
+using System.Globalization;
 
 namespace MapleTools.Services.FileDataServices
 {
@@ -22,17 +15,15 @@ namespace MapleTools.Services.FileDataServices
 
         public async override Task Aggregate()
         {
-            if (Data.Count == 0)
+            var culture = CultureInfo.CurrentCulture.Name;
+            if (!Data.ContainsKey(culture))
             {
+                var result = await FileAccessor.JsonFileReader<List<Blog>>(FilePath, culture, 9999);
+                Data.TryAdd(culture, result);
 
-                foreach (var language in Languages)
-                {
-                    var result = await FileAccessor.JsonFileReader<List<Blog>>(FilePath, language);
-                    Data.TryAdd(language, result);
-                }
             }
             await base.Aggregate();
         }
-        
+
     }
 }

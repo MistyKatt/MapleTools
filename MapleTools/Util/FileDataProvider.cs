@@ -5,6 +5,13 @@ using Newtonsoft.Json;
 
 namespace MapleTools.Util
 {
+    public enum SaveMode
+    {
+        Simple,
+        LanguageNoVersion,
+        VersionNoLanguage,
+        VersionAndLanguage
+    }
     public class FileDataProvider : IFileAccessor
     {
         private IOptions<LocalizationOptions> _options;
@@ -12,110 +19,181 @@ namespace MapleTools.Util
         {
             _options = options;
         }
-        public async Task<T> JsonFileReader<T>(string rootPath, string language)
+
+        /// <summary>
+        /// Read the model data from specific path and based on specific language, version
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rootPath">The folder that represent the item data</param>
+        /// <param name="language">indicate that the item has multiple languages</param>
+        /// <param name="version">indicate that the item has multiple versions, -1 means no version and 9999 means latest version</param>
+        /// <returns></returns>
+        public async Task<T> JsonFileReader<T>(string rootPath, string language, int version)
         {
             if (Directory.Exists(rootPath))
             {
-                var version = LatestVersion(rootPath, language);
-                var filePath = FileNameWithVersion(rootPath, language, version);
-                if (File.Exists(filePath))
+                if (string.IsNullOrEmpty(language))
                 {
-                    using (StreamReader rs = new StreamReader(filePath))
+                    if (version == -1)
                     {
-                        var result = await rs.ReadToEndAsync();
-                        var data = JsonConvert.DeserializeObject<T>(result) ?? default(T);
-                        return data;
+                        return await SimpleFileReader<T>(rootPath);
                     }
+                    return await VersionFileReaderNoLanguage<T>(rootPath, version);
                 }
+                if (version == -1)
+                    return await LanguageFileReaderNoVersion<T>(rootPath, language);
+
+                var filePath = "";
+                if (version == 9999)
+                {
+                    version = LatestVersion(rootPath, language);
+                }
+                filePath = Path.Combine(rootPath, $"{language}_{version}.json");
+                if (!File.Exists(filePath))
+                {
+                    filePath = Path.Combine(rootPath, $"{language}.json");
+                }
+                return await ModelFromFile<T>(filePath);
             }
             return default(T);
         }
         /// <summary>
-        /// Given a rootpath (folder), save the model data under the folder
+        /// Given a rootpath (folder), language, mode, save the model data under the folder
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="rootPath"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task JsonFileWriter<T>(string rootPath, string language, T model)
+        public async Task JsonFileWriter<T>(string rootPath, string language, SaveMode mode, T model)
         {
             if (!Directory.Exists(rootPath))
                 Directory.CreateDirectory(rootPath);
-            var filesInLanguage = Directory.GetFiles(rootPath).Where(f => Path.GetFileNameWithoutExtension(f).Contains(language));
-            if (filesInLanguage.Count() > 0)
+            var filePath = "";
+            var latestVersion = 0;
+            switch(mode)
             {
-                var latestVersion = LatestVersion(rootPath, language);
-                var newFileName = CreateFileNameWithVersion(rootPath, language, latestVersion);
-                using (StreamWriter sw = new StreamWriter(newFileName))
-                {
-                    var str = JsonConvert.SerializeObject(model);
-                    await sw.WriteAsync(str);
-                }
-            }
-            //initialize base file for each language
-            else
-            {
-                foreach (var lang in _options.Value.Languages)
-                {
-                    var path = Path.Combine(rootPath, $"{lang}.json");
-                    using (StreamWriter sw = new StreamWriter(path))
+                case SaveMode.Simple:
+                    filePath = Path.Combine(rootPath, "data.json");
+                    await SimpleFileWriter<T>(rootPath, model);
+                    break;
+                case SaveMode.LanguageNoVersion:
+                    filePath = Path.Combine(rootPath, $"{language}.json");
+                    await SimpleFileWriter<T>(rootPath, model);
+                    break;
+                case SaveMode.VersionNoLanguage:
+                    latestVersion = LatestVersion(rootPath, "data");
+                    if (latestVersion == -1)
                     {
-                        var str = JsonConvert.SerializeObject(model);
-                        await sw.WriteAsync(str);
+                        filePath = Path.Combine(rootPath, $"data.json");
+                        if (File.Exists(filePath))
+                            filePath = Path.Combine(rootPath, $"data_1.json");
                     }
-                }
+                    else
+                        filePath = Path.Combine(rootPath, $"data_{latestVersion + 1}.json");
+                    await SimpleFileWriter<T>(rootPath, model);
+                    break;
+                case SaveMode.VersionAndLanguage:
+                    latestVersion = LatestVersion(rootPath, language);
+                    if (latestVersion == -1)
+                    {
+                        filePath = Path.Combine(rootPath, $"{language}.json");
+                        if (File.Exists(filePath))
+                            filePath = Path.Combine(rootPath, $"{language}_1.json");
+                    }
+                    filePath = Path.Combine(rootPath, $"{language}_{latestVersion + 1}.json");
+                    await SimpleFileWriter<T>(rootPath, model);
+                    break;
+                default:
+                    break;
 
             }
         }
 
-        private string LatestVersion(string filePath, string language)
+        private int LatestVersion(string filePath, string language)
         {
 
             var files = Directory.GetFiles(filePath).Where(f => Path.GetFileNameWithoutExtension(f).Contains(language)).Where(f=>Path.GetFileNameWithoutExtension(f).Split('_').Count() == 2);
             if (files.Count() == 0)
             {
-                return "";
+                return -1;
             }
             try
             {
                 //get filenames without extesion & in lan_version format. Then return the version with max value.
                 var version = files.Select(f => Path.GetFileNameWithoutExtension(f)).Where(f => f.Split('_').Count() == 2).Select(f => int.Parse((f.Split('_')[1]))).Max();
-                return "" + version;
+                return version;
             }
             catch (Exception ex)
             {
-                return "";
+                return -1;
             }
         }
 
-        private string FileNameWithVersion(string rootPath, string language, string version)
+        /// <summary>
+        /// Read data without any language or version
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="rootPath">The root path of the item, the file name will be data.json always</param>
+        /// <returns></returns>
+        private async Task<T> SimpleFileReader<T>(string rootPath)
         {
-            var result = "";
-            if (int.TryParse(version, out var versionNumber))
+            var filePath = Path.Combine(rootPath, "data.json");
+            if (!File.Exists(filePath))
             {
-                result = Path.Join(rootPath, language) + "_" + ((versionNumber) + ".json");
+                return default(T);
             }
-            else
-            {
-                result = Path.Join(rootPath, language) + ".json";
-            }
-            return result;
+
+            return await ModelFromFile<T>(filePath);
         }
 
-        private string CreateFileNameWithVersion(string rootPath, string language, string version)
+        private async Task<T> VersionFileReaderNoLanguage<T>(string rootPath, int version)
         {
-            var result = "";
-            if (int.TryParse(version, out var versionNumber))
+            string filePath = filePath = Path.Combine(rootPath, $"data.json");
+            if (!File.Exists(filePath))
             {
-                result = Path.Join(rootPath, language) + "_" + ((versionNumber+1) + ".json");
+                return default(T);
             }
-            else if(File.Exists(Path.Join(rootPath, language) + ".json"))
+            if (version != 0)
             {
-                result = Path.Join(rootPath, language) + "_1.json";
+                filePath = Path.Combine(rootPath, $"data_{version}.json");
+                if (!File.Exists(filePath))
+                {
+                    filePath = Path.Combine(rootPath, $"data.json");//fallback
+                }
             }
-            else
-                result = Path.Join(rootPath, language) + ".json";
-            return result;
+            return await ModelFromFile<T>(filePath);
+
         }
+
+        private async Task<T> LanguageFileReaderNoVersion<T>(string rootPath, string language)
+        {
+            string filePath = Path.Combine(rootPath, $"{language}.json");
+            if (!File.Exists(filePath))
+            {
+                return default(T);
+            }
+            return await ModelFromFile<T>(filePath);
+        }
+
+        private async Task<T> ModelFromFile<T>(string filePath)
+        {
+            try
+            {
+                string json = await File.ReadAllTextAsync(filePath);
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception - replace with your actual logging mechanism
+                Console.WriteLine($"Error reading file {filePath}: {ex.Message}");
+                return default(T);
+            }
+        }
+
+        private async Task SimpleFileWriter<T>(string filePath, T model)
+        {
+            var text = JsonConvert.SerializeObject(model);
+            await File.WriteAllTextAsync(filePath, text);
+        }     
     }
 }

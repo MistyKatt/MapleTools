@@ -1,6 +1,5 @@
-﻿using System.Xml;
+﻿using MapleTools.Models.Api;
 using Newtonsoft.Json;
-using MapleTools.Models.Api;
 
 namespace DataGenerator
 {
@@ -12,9 +11,21 @@ namespace DataGenerator
             var players = new List<Player>();
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
+            //params
+            string world = "eu";
+            int sampleSize = 50;
+
             // Generate 1000 fake entries
-            for (int i = 0; i < 10000; i++)
+            for (int i = 0; i < sampleSize; i++)
             {
+                string worldName;
+                if (world == "eu")
+                    worldName = "solis";
+                else
+                {
+                    int flip = random.Next(0, 2);
+                    worldName = (flip == 0) ? "kronos" : "hyperion";
+                }
                 players.Add(new Player
                 {
                     CharacterID = i,
@@ -24,7 +35,7 @@ namespace DataGenerator
                     Exp = (long)(random.NextDouble() * long.MaxValue),
                     Gap = (long)(random.NextDouble() * long.MaxValue),
                     WorldID = random.Next(1, 100),
-                    WorldName = "Kronos",
+                    WorldName = worldName,
                     CharacterImgURL = "https://example.com/dummy-image.png"
                 });
             }

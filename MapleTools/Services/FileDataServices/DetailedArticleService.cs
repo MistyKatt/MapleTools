@@ -3,6 +3,7 @@ using MapleTools.Models.Boss;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Collections.Concurrent;
 using MapleTools.Models.Content;
+using System.Globalization;
 
 namespace MapleTools.Services.FileDataServices
 {
@@ -16,19 +17,17 @@ namespace MapleTools.Services.FileDataServices
 
         public async override Task Aggregate()
         {
-            if (Data.Count == 0)
+            var culture = CultureInfo.CurrentCulture.Name;
+            if (!Data.ContainsKey(culture))
             {
-                foreach (var language in Languages)
-                {
                     var contents = new ConcurrentDictionary<string, T>();
                     var contentPath = Directory.GetDirectories(FilePath);
                     foreach(var path in contentPath)
                     {
-                        var result = await FileAccessor.JsonFileReader<T>(path, language);
+                        var result = await FileAccessor.JsonFileReader<T>(path, culture, 9999);
                         contents.TryAdd(result.ContentPath, result);
                     }
-                    Data.TryAdd(language, contents);
-                }
+                    Data.TryAdd(culture, contents);
             }
             await base.Aggregate();
         }
